@@ -123,9 +123,12 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .no-result{grid-column:1/-1;text-align:center;padding:2.5rem;font-size:.85rem;color:var(--ink3)}
 
 .sel-tags{display:flex;flex-wrap:wrap;gap:6px}
-.sel-tag{display:flex;align-items:center;gap:5px;background:#fdf6e8;border:1px solid var(--gold);border-radius:99px;padding:3px 10px 3px 12px;font-size:.72rem;color:var(--ink2);cursor:default}
-.sel-tag-name{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sel-tag-vol{font-size:.65rem;color:var(--ink3)}
+.sel-tag{display:flex;align-items:center;gap:4px;background:#fdf6e8;border:1px solid var(--gold);border-radius:99px;padding:3px 8px 3px 8px;font-size:.72rem;color:var(--ink2);cursor:grab;user-select:none;transition:opacity .15s,box-shadow .15s}
+.sel-tag:hover{box-shadow:0 1px 4px rgba(200,150,60,.3)}
+.sel-tag-drag{font-size:.7rem;color:var(--ink3);cursor:grab}
+.sel-tag-num{font-size:.62rem;font-weight:700;color:var(--gold2);min-width:12px}
+.sel-tag-name{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sel-tag-vol{font-size:.63rem;color:var(--ink3)}
 .sel-tag-remove{width:14px;height:14px;border-radius:50%;background:var(--paper3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--ink3);line-height:1;padding:0;flex-shrink:0}
 .sel-tag-remove:hover{background:var(--gold);color:#fff}
 .ed-footer{background:var(--ink);padding:.9rem 2rem;display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0}
@@ -141,24 +144,33 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .prop-nav-btns{display:flex;gap:8px}
 .prop-inner{max-width:860px;margin:0 auto;padding:1.2rem 2rem 3rem}
 .prop-cover{
-  display:flex;align-items:center;justify-content:space-between;
   background:var(--ink);border-radius:8px;
-  padding:1rem 1.6rem;margin-bottom:1.5rem;gap:1rem;
+  padding:.8rem 1.5rem;margin-bottom:1rem;
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
 }
-.cover-left{display:flex;flex-direction:column;gap:.25rem}
+.cover-left{display:flex;align-items:center}
+.cover-main-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .cover-company{
-  font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;
-  color:#fff;letter-spacing:.18em;line-height:1;
-  text-transform:uppercase;
+  font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;
+  color:rgba(247,243,236,.55);letter-spacing:.2em;line-height:1;text-transform:uppercase;
 }
-.cover-kanji-title{display:flex;align-items:baseline;gap:.5rem}
-.cover-kanji{font-family:'Shippori Mincho',serif;font-size:1rem;color:rgba(247,243,236,.3);letter-spacing:.1em;line-height:1}
-.cover-title{font-family:'Noto Serif KR',serif;font-size:.78rem;font-weight:400;color:rgba(247,243,236,.55);letter-spacing:.04em}
-.cover-right{display:flex;flex-direction:column;gap:.35rem;text-align:right}
-.cover-date-row{font-size:.72rem;color:rgba(247,243,236,.5)}
-.cover-sales-row{display:flex;align-items:center;justify-content:flex-end;gap:.5rem;font-size:1.05rem;font-weight:500;color:#fff}
-.cover-sales-sep{color:rgba(247,243,236,.3);font-size:.9rem}
-.p-items-grid{display:block}
+.cover-kanji{
+  font-family:'Shippori Mincho',serif;font-size:.9rem;
+  color:rgba(247,243,236,.35);letter-spacing:.08em;
+}
+.cover-vsep{
+  width:1px;height:1.1rem;background:rgba(247,243,236,.25);flex-shrink:0;
+}
+.cover-biz-name{
+  font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;
+  color:#fff;letter-spacing:.02em;line-height:1.2;
+}
+.cover-right{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
+.cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
+.cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
+.cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
+.p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
 .prop-item{display:grid;grid-template-columns:80px 1fr;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border);page-break-inside:avoid}
 .prop-item:last-child{border-bottom:none}
 .p-img-col{display:flex;flex-direction:column;gap:.3rem}
@@ -167,25 +179,51 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
 .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:var(--ink);color:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
 .p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2);margin-top:.1rem}
-.p-header{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem}
-.p-name{font-family:'Noto Serif KR',serif;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.3}
+.p-name{font-family:'Noto Serif KR',serif;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.2rem}
+.p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
+.p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
 .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
-.p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap;vertical-align:middle}
 .p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.4rem}
 .spec-box{background:var(--paper2);border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
 .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
 .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
 .spec-val.price{color:var(--gold2)}
-.p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 @media print{
   .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
   .prop-item{border-bottom:1px solid var(--border)}
 }
 
 @media print{
+  @page{margin:8mm 10mm}
   #editor,#setup,#loading{display:none!important}
   #proposal{display:block!important}
   .prop-nav{display:none!important}
+  .prop-cover{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    background:#1a1208!important;
+    padding:.5rem 1.2rem!important;
+    margin-bottom:.6rem!important;
+    border-radius:5px!important;
+  }
+  .prop-inner{padding:.4rem 0 0!important}
+  .p-items-grid{display:grid!important;grid-template-columns:1fr 1fr;gap:0 1rem!important}
+  .prop-item{
+    padding:.3rem 0!important;
+    border-bottom:0.5px solid rgba(26,18,8,0.12)!important;
+    break-inside:avoid;
+    grid-template-columns:62px 1fr!important;
+    gap:.5rem!important;
+  }
+  .p-name{font-size:.72rem!important}
+  .p-sub-row{margin-bottom:.1rem!important}
+  .p-specs{gap:2px!important;margin-bottom:.2rem!important}
+  .spec-box{padding:2px 5px!important}
+  .spec-label{font-size:.45rem!important}
+  .spec-val{font-size:.58rem!important}
+  .p-desc{-webkit-line-clamp:2!important;font-size:.56rem!important;line-height:1.4!important}
+  .p-img-price{font-size:.62rem!important}
 }
 @media(max-width:640px){
   .info-panel{grid-template-columns:1fr 1fr}
@@ -271,7 +309,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
     <div class="sel-info">선택된 상품 <span class="sel-badge" id="sel-badge">0</span>개</div>
     <div id="sel-panel" style="display:none;margin-top:.8rem">
       <div class="sec-label" style="margin-bottom:.5rem">선택된 상품</div>
-      <div id="sel-tags"></div>
+      <div id="sel-tags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div style="font-size:.65rem;color:var(--ink3);margin-top:.4rem">드래그해서 순서 변경</div>
     </div>
   </div>
   <div class="ed-footer">
@@ -293,17 +332,18 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
   <div class="prop-inner">
     <div class="prop-cover">
       <div class="cover-left">
-        <div class="cover-company">ILOSAKE</div>
-        <div class="cover-kanji-title">
+        <div class="cover-main-row">
+          <span class="cover-company">ILOSAKE</span>
           <span class="cover-kanji">提案書</span>
-          <span class="cover-title" id="p-title">일로사케 상품 제안서</span>
+          <span class="cover-vsep"></span>
+          <span class="cover-biz-name" id="p-title"></span>
         </div>
       </div>
       <div class="cover-right">
         <div class="cover-date-row" id="p-meta-date"></div>
         <div class="cover-sales-row">
           <span id="p-meta-name"></span>
-          <span class="cover-sales-sep">·</span>
+          <span class="cover-hsep">ㅣ</span>
           <span id="p-meta-tel"></span>
         </div>
       </div>
@@ -524,26 +564,67 @@ function renderGrid(products) {
 }
 
 function toggleSelect(idx) {
-  selected.has(idx) ? selected.delete(idx) : selected.add(idx);
+  if (selected.has(idx)) {
+    selected.delete(idx);
+    selectedOrder = selectedOrder.filter(i => i !== idx);
+  } else {
+    selected.add(idx);
+  }
   document.querySelector(`[data-idx="${idx}"]`)?.classList.toggle('sel', selected.has(idx));
   document.getElementById('sel-badge').textContent = selected.size;
   renderSelTags();
 }
 
+// 선택 순서 배열 (드래그로 재정렬 가능)
+let selectedOrder = [];
+
 function renderSelTags() {
   const panel = document.getElementById('sel-panel');
   const container = document.getElementById('sel-tags');
-  if (!selected.size) { panel.style.display = 'none'; return; }
+  if (!selected.size) { panel.style.display = 'none'; selectedOrder = []; return; }
+  // selectedOrder 동기화
+  selectedOrder = selectedOrder.filter(i => selected.has(i));
+  selected.forEach(i => { if (!selectedOrder.includes(i)) selectedOrder.push(i); });
   panel.style.display = 'block';
-  container.innerHTML = [...selected].map(idx => {
+  container.innerHTML = selectedOrder.map((idx, pos) => {
     const p = allProducts[idx];
-    return `<div class="sel-tag">
+    return `<div class="sel-tag" draggable="true"
+      ondragstart="dragStart(event,${pos})"
+      ondragover="dragOver(event)"
+      ondrop="dragDrop(event,${pos})"
+      ondragend="dragEnd(event)">
+      <span class="sel-tag-drag">⠿</span>
+      <span class="sel-tag-num">${pos+1}</span>
       <span class="sel-tag-name">${p.name}</span>
       ${p.vol ? `<span class="sel-tag-vol">${p.vol}ml</span>` : ''}
-      <button class="sel-tag-remove" onclick="toggleSelect(${idx})" title="제거">✕</button>
+      <button class="sel-tag-remove" onclick="removeSelected(${idx})" title="제거">✕</button>
     </div>`;
   }).join('');
 }
+
+function removeSelected(idx) {
+  selected.delete(idx);
+  selectedOrder = selectedOrder.filter(i => i !== idx);
+  document.querySelector(`[data-idx="${idx}"]`)?.classList.remove('sel');
+  document.getElementById('sel-badge').textContent = selected.size;
+  renderSelTags();
+}
+
+let dragSrcPos = null;
+function dragStart(e, pos) {
+  dragSrcPos = pos;
+  e.target.style.opacity = '.4';
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function dragDrop(e, pos) {
+  e.preventDefault();
+  if (dragSrcPos === null || dragSrcPos === pos) return;
+  const moved = selectedOrder.splice(dragSrcPos, 1)[0];
+  selectedOrder.splice(pos, 0, moved);
+  renderSelTags();
+}
+function dragEnd(e) { dragSrcPos = null; e.target.style.opacity = '1'; renderSelTags(); }
 
 function filterProducts() {
   const q = document.getElementById('search').value.replace(/\s/g,'').toLowerCase();
@@ -565,13 +646,14 @@ function generateProposal() {
 
   const salesName = document.getElementById('sales-name').value.trim();
   const salesTel  = document.getElementById('sales-tel').value.trim();
-  document.getElementById('p-title').textContent     = biz + ' 상품 제안서';
+  document.getElementById('p-title').textContent     = biz;
   document.getElementById('p-nav-title').textContent = biz + ' 제안서';
   document.getElementById('p-meta-date').textContent = monthStr ? monthStr + ' 기준' : '';
   document.getElementById('p-meta-name').textContent = salesName || '';
   document.getElementById('p-meta-tel').textContent  = salesTel  || '';
 
-  const items = [...selected].map(i => allProducts[i]);
+
+  const items = selectedOrder.map(i => allProducts[i]);
   document.getElementById('p-items').innerHTML = items.map((p,n) => {
     const src = findImg(p.name);
     const imgHtml = src ? `<img src="${src}"/>` : `<div class="p-img-ph">🍶</div>`;
@@ -591,8 +673,8 @@ function generateProposal() {
         ${p.price?`<div class="p-img-price">${fmtPrice(p.price)}</div>`:''}
       </div>
       <div>
-        <div class="p-header"><span class="p-name">${p.name}</span><span class="p-grade">${p.grade}</span></div>
-        <div class="p-name-jp">${p.nameJp}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-sub-row"><span class="p-grade">${p.grade}</span><span class="p-name-jp">${p.nameJp}</span></div>
         <div class="p-specs">${specsNoPrice.map(s=>`<div class="spec-box"><span class="spec-label">${s.label}</span><span class="spec-val ${s.cls||''}">${s.value}</span></div>`).join('')}</div>
         <div class="p-desc">${p.desc}</div>
       </div>
@@ -606,81 +688,95 @@ function generateProposal() {
 
 
 function exportHTML() {
-  const title    = document.getElementById('p-title').textContent;
+  const bizName  = document.getElementById('p-title').textContent;
+  const title    = bizName + ' 상품 제안서';
   const metaDate = document.getElementById('p-meta-date').textContent;
   const metaName = document.getElementById('p-meta-name').textContent;
   const metaTel  = document.getElementById('p-meta-tel').textContent;
   const items    = document.getElementById('p-items').innerHTML;
-  const metaRows = [
-    metaDate ? `<div class="cover-date-row">${metaDate}</div>` : '',
-    (metaName||metaTel) ? `<div class="cover-sales-row"><span>${metaName}</span>${metaName&&metaTel?'<span class="cover-sales-sep">·</span>':''}<span>${metaTel}</span></div>` : '',
-  ].filter(Boolean).join('');
 
-  const html = `<!DOCTYPE html>
+  const coverHtml = `<div class="prop-cover">
+    <div class="cover-left">
+      <div class="cover-main-row">
+        <span class="cover-company">ILOSAKE</span>
+        <span class="cover-kanji">提案書</span>
+        <span class="cover-vsep"></span>
+        <span class="cover-biz-name">${bizName}</span>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-date-row">${metaDate}</div>
+      <div class="cover-sales-row"><span>${metaName}</span><span class="cover-hsep">ㅣ</span><span>${metaTel}</span></div>
+    </div>
+  </div>`;
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Shippori+Mincho:wght@400;600&display=swap');
+    :root{--ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;--paper:#f7f3ec;--paper2:#ede8de;--paper3:#ddd8cc;--gold:#c8963c;--gold2:#a87830;--border:rgba(26,18,8,0.1)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--ink)}
+    .prop-inner{max-width:860px;margin:0 auto;padding:1rem 1.5rem 3rem}
+    .prop-cover{background:#1a1208;border-radius:8px;padding:.8rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .cover-left{display:flex;align-items:center}
+    .cover-main-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+    .cover-company{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:rgba(247,243,236,.55);letter-spacing:.2em;line-height:1;text-transform:uppercase}
+    .cover-kanji{font-family:'Shippori Mincho',serif;font-size:.9rem;color:rgba(247,243,236,.35);letter-spacing:.08em}
+    .cover-vsep{width:1px;height:1.1rem;background:rgba(247,243,236,.25);flex-shrink:0;display:inline-block}
+    .cover-biz-name{font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;color:#fff;letter-spacing:.02em;line-height:1.2}
+    .cover-right{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
+    .cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
+    .cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
+    .cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
+    .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem}
+    .prop-item{display:grid;grid-template-columns:80px 1fr;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border);break-inside:avoid}
+    .prop-item:last-child{border-bottom:none}
+    .p-img-col{display:flex;flex-direction:column;gap:.3rem}
+    .p-img-wrap{position:relative}
+    .p-img-wrap img{width:100%;aspect-ratio:2/3;object-fit:contain;border-radius:5px;background:var(--paper2);display:block}
+    .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
+    .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:#1a1208;color:#f7f3ec;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
+    .p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2)}
+    .p-name{font-family:'Noto Serif KR',serif;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.2rem}
+    .p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
+    .p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
+    .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
+    .p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.4rem}
+    .spec-box{background:var(--paper2);border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
+    .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+    .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
+    .spec-val.price{color:var(--gold2)}
+    .p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+    @media print{
+      @page{margin:8mm 10mm}
+      .prop-cover{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;background:#1a1208!important}
+      .prop-item{break-inside:avoid;grid-template-columns:62px 1fr!important;gap:.5rem!important;padding:.3rem 0!important}
+      .p-name{font-size:.72rem!important}
+      .spec-label{font-size:.45rem!important}.spec-val{font-size:.58rem!important}
+      .p-desc{-webkit-line-clamp:2!important;font-size:.56rem!important}
+    }
+  `;
+
+  const doc = `<!DOCTYPE html>
 <html lang="ko">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>${title}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet"/>
-<style>
-:root{--ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;--paper:#f7f3ec;--paper2:#ede8de;--paper3:#ddd8cc;--gold:#c8963c;--gold2:#a87830;--border:rgba(26,18,8,0.1);--border2:rgba(26,18,8,0.22)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Noto Sans KR",sans-serif;background:var(--paper);color:var(--ink)}
-.prop-inner{max-width:860px;margin:0 auto;padding:1.2rem 2rem 3rem}
-.prop-inner{max-width:860px;margin:0 auto;padding:1.2rem 2rem 3rem}
-.prop-inner{max-width:860px;margin:0 auto;padding:1.2rem 2rem 3rem}
-.prop-cover{display:flex;align-items:center;justify-content:space-between;background:#1a1208;border-radius:8px;padding:1rem 1.6rem;margin-bottom:1.5rem;gap:1rem}
-.cover-left{display:flex;flex-direction:column;gap:.25rem}
-.cover-company{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:600;color:#fff;letter-spacing:.18em;line-height:1;text-transform:uppercase}
-.cover-kanji-title{display:flex;align-items:baseline;gap:.5rem}
-.cover-kanji{font-family:"Shippori Mincho",serif;font-size:1rem;color:rgba(247,243,236,.3);letter-spacing:.1em}
-.cover-title{font-family:"Noto Serif KR",serif;font-size:.78rem;font-weight:400;color:rgba(247,243,236,.55);letter-spacing:.04em}
-.cover-right{display:flex;flex-direction:column;gap:.35rem;text-align:right}
-.cover-date-row{font-size:.72rem;color:rgba(247,243,236,.5)}
-.cover-sales-row{display:flex;align-items:center;justify-content:flex-end;gap:.5rem;font-size:1.05rem;font-weight:500;color:#fff}
-.cover-sales-sep{color:rgba(247,243,236,.3)}
-.p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
-.prop-item{display:grid;grid-template-columns:80px 1fr;gap:.8rem;padding:.75rem 0;border-bottom:1px solid rgba(26,18,8,0.1);page-break-inside:avoid}
-.prop-item:last-child{border-bottom:none}
-.p-img-col{display:flex;flex-direction:column;gap:.3rem}
-.p-img-wrap{position:relative}
-.p-img-wrap img{width:100%;aspect-ratio:2/3;object-fit:contain;border-radius:5px;background:#ede8de;display:block}
-.p-img-ph{width:100%;aspect-ratio:2/3;background:#ede8de;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ddd8cc}
-.p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:#1a1208;color:#f7f3ec;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
-.p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:#a87830}
-.p-header{display:flex;align-items:baseline;gap:.5rem;flex-wrap:wrap;margin-bottom:.2rem}
-.p-name{font-family:"Noto Serif KR",serif;font-size:.88rem;font-weight:600;color:#1a1208;line-height:1.3}
-.p-name-jp{font-family:"Shippori Mincho",serif;font-size:.68rem;color:#7a6248}
-.p-grade{display:inline-block;padding:1px 7px;border:1px solid #c8963c;color:#a87830;font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap;vertical-align:middle}
-.p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.4rem}
-.spec-box{background:#ede8de;border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
-.spec-label{font-size:.52rem;color:#7a6248;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
-.spec-val{font-size:.68rem;font-weight:500;color:#1a1208;line-height:1.2}
-.spec-val.price{color:#a87830}
-.p-desc{font-size:.63rem;color:#3d2f1a;line-height:1.65;font-weight:300;border-left:1.5px solid #c8963c;padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-@media print{.prop-item{page-break-inside:avoid}}
-</style>
+<style>${css}</style>
 </head>
 <body>
 <div class="prop-inner">
-  <div class="prop-cover">
-    <div class="cover-kanji">提案書</div>
-    <div class="cover-title">${title}</div>
-    <div class="cover-line"></div>
-    <div class="cover-meta">${meta}</div>
-  </div>
-  ${items}
+  ${coverHtml}
+  <div class="p-items-grid">${items}</div>
 </div>
 </body>
 </html>`;
 
-  const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+  const blob = new Blob([doc], {type: 'text/html;charset=utf-8'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
   a.href     = url;
-  a.download = title.replace(/\s+/g,'_') + '.html';
+  a.download = (bizName || '제안서').replace(/\s+/g,'_') + '.html';
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -697,6 +793,7 @@ function resetAll() {
   document.getElementById('search').value           = '';
   document.getElementById('grade-filter').value     = '';
   document.getElementById('style-filter').value     = '';
+  selectedOrder = [];
   document.getElementById('sel-badge').textContent  = '0';
   renderSelTags();
   renderGrid(allProducts);
