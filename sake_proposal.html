@@ -417,7 +417,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 
     <!-- 이미지 (저장됨) -->
     <div class="section-divider">이미지 — 브라우저에 저장</div>
-    <div id="img-saved-row" class="img-saved-row" style="display:none">
+    <div id="img-saved-row" class="img-saved-row" style="display:none;visibility:hidden">
       <span id="img-saved-txt"></span>
       <button onclick="clearImages()">이미지 초기화</button>
     </div>
@@ -657,12 +657,11 @@ async function clearImages() {
 }
 
 /* ── 이미지 매칭 ── */
+const GITHUB_IMG = 'https://natui714.github.io/sake-proposal/';
+
 function findImg(name) {
-  if (imageMap[name]) return imageMap[name];
-  for (const key of Object.keys(imageMap)) {
-    if (key.includes(name) || name.includes(key)) return imageMap[key];
-  }
-  return null;
+  // 깃허브 이미지 URL 자동 생성 (상품명.png)
+  return GITHUB_IMG + encodeURIComponent(name) + '.png';
 }
 
 /* ── 앱 시작 ── */
