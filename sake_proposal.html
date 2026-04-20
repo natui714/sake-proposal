@@ -568,7 +568,7 @@ function closeXlsxModal() {
 function handleXlsx(file) {
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = e => {
+  reader.onload = async e => {
     try {
       const wb   = XLSX.read(e.target.result, {type:'array'});
       const ws   = wb.Sheets[wb.SheetNames[0]];
