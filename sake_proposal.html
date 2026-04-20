@@ -152,8 +152,9 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .cover-left{display:flex;align-items:center}
 .cover-main-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
 .cover-company{
-  font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;
-  color:rgba(247,243,236,.55);letter-spacing:.2em;line-height:1;text-transform:uppercase;
+  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;
+  color:#fff;letter-spacing:.22em;line-height:1;text-transform:uppercase;
+  text-shadow:0 0 20px rgba(200,150,60,.4);
 }
 .cover-kanji{
   font-family:'Shippori Mincho',serif;font-size:.9rem;
@@ -171,15 +172,16 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
 .cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
 .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
-.prop-item{display:grid;grid-template-columns:80px 1fr;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border);page-break-inside:avoid}
+.prop-item{display:grid;grid-template-columns:110px 1fr;gap:1rem;padding:.75rem 0;border-bottom:none;page-break-inside:avoid}
 .prop-item:last-child{border-bottom:none}
 .p-img-col{display:flex;flex-direction:column;gap:.3rem}
 .p-img-wrap{position:relative}
 .p-img-wrap img{width:100%;aspect-ratio:2/3;object-fit:contain;border-radius:5px;background:var(--paper2);display:block}
 .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
 .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:var(--ink);color:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
-.p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2);margin-top:.1rem}
-.p-name{font-family:'Noto Serif KR',serif;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.2rem}
+.p-img-price{text-align:center;font-size:.82rem;font-weight:700;color:var(--gold2);margin-top:.25rem}
+.p-name-row{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;margin-bottom:.3rem}
+.p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3}
 .p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
 .p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
 .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
@@ -188,49 +190,205 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
 .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
 .spec-val.price{color:var(--gold2)}
-.p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-@media print{
-  .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
-  .prop-item{border-bottom:1px solid var(--border)}
-}
+.p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
 
-@media print{
-  @page{margin:8mm 10mm}
-  #editor,#setup,#loading{display:none!important}
-  #proposal{display:block!important}
-  .prop-nav{display:none!important}
-  .prop-cover{
-    -webkit-print-color-adjust:exact!important;
-    print-color-adjust:exact!important;
-    background:#1a1208!important;
-    padding:.5rem 1.2rem!important;
-    margin-bottom:.6rem!important;
-    border-radius:5px!important;
-  }
-  .prop-inner{padding:.4rem 0 0!important}
-  .p-items-grid{display:grid!important;grid-template-columns:1fr 1fr;gap:0 1rem!important}
-  .prop-item{
-    padding:.3rem 0!important;
-    border-bottom:0.5px solid rgba(26,18,8,0.12)!important;
-    break-inside:avoid;
-    grid-template-columns:62px 1fr!important;
-    gap:.5rem!important;
-  }
-  .p-name{font-size:.72rem!important}
-  .p-sub-row{margin-bottom:.1rem!important}
-  .p-specs{gap:2px!important;margin-bottom:.2rem!important}
-  .spec-box{padding:2px 5px!important}
-  .spec-label{font-size:.45rem!important}
-  .spec-val{font-size:.58rem!important}
-  .p-desc{-webkit-line-clamp:2!important;font-size:.56rem!important;line-height:1.4!important}
-  .p-img-price{font-size:.62rem!important}
-}
+
+
 @media(max-width:640px){
   .info-panel{grid-template-columns:1fr 1fr}
   .prop-item{grid-template-columns:130px 1fr;gap:1.2rem}
   .p-specs{grid-template-columns:repeat(2,1fr)}
   .ed-body{padding:1rem}
 }
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:8mm 12mm;
+  }
+
+  #editor,#setup,#loading{ display:none!important }
+  #proposal{ display:block!important }
+  .prop-nav{ display:none!important }
+
+  /* 헤더: 모든 페이지 반복은 running element 방식 대신
+     첫 페이지만 표시하고 이후 페이지는 @page margin으로 공간만 확보 */
+  .prop-cover{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    background:#1a1208!important;
+    border-radius:6px!important;
+    margin-bottom:4mm!important;
+    break-after:avoid!important;
+  }
+
+  .prop-inner{
+    max-width:100%!important;
+    padding:0!important;
+  }
+
+  .spec-box{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    background:#f0ece4!important;
+  }
+
+  /* 2단 */
+  .p-items-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:0 12mm!important;
+  }
+
+  /* 카드: A4가로 유효높이(194mm) - 헤더(16mm) - 마진(4mm) = 174mm / 5행 = 34.8mm */
+  .prop-item{
+    height:34mm!important;
+    overflow:hidden!important;
+    break-inside:avoid!important;
+    display:grid!important;
+    grid-template-columns:20mm 1fr!important;
+    gap:2.5mm!important;
+    padding:1.5mm 0!important;
+    border-bottom:.3pt solid rgba(26,18,8,0.1)!important;
+    position:relative!important;
+    box-sizing:border-box!important;
+  }
+  .prop-item:last-child{ border-bottom:none!important; }
+
+  .p-num{
+    position:absolute!important; top:1.5mm!important; left:0!important;
+    width:3.5mm!important; height:3.5mm!important; font-size:4.5pt!important;
+    background:#1a1208!important; color:#fff!important; border-radius:50%!important;
+    display:flex!important; align-items:center!important; justify-content:center!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  .p-img-col{
+    width:20mm!important;
+    height:31mm!important;
+    display:flex!important;
+    flex-direction:column!important;
+    padding-top:2.5mm!important;
+    box-sizing:border-box!important;
+  }
+  .p-img-wrap{
+    flex:1!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  .p-img-wrap img{
+    width:100%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    display:block!important;
+  }
+  .p-img-price{
+    font-size:9pt!important;
+    font-weight:700!important;
+    color:#a87830!important;
+    text-align:center!important;
+    margin-top:.5mm!important;
+    flex-shrink:0!important;
+    display:block!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  .prop-item > div:last-child{
+    height:31mm!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    padding-top:1.5mm!important;
+    box-sizing:border-box!important;
+  }
+
+  .p-name-row{
+    display:flex!important;
+    align-items:baseline!important;
+    gap:1mm!important;
+    flex-wrap:wrap!important;
+    margin-bottom:.4mm!important;
+    flex-shrink:0!important;
+  }
+  .p-name{ font-size:8.5pt!important; font-weight:700!important; line-height:1.2!important; }
+  .p-name-jp{ font-size:6pt!important; color:#7a6248!important; }
+  .p-grade{
+    font-size:5.5pt!important; padding:.3mm 1.5mm!important;
+    border:.3pt solid #c8963c!important; color:#a87830!important;
+    border-radius:2pt!important; white-space:nowrap!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  .p-specs{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:1.5px!important;
+    margin-bottom:.4mm!important;
+    flex-shrink:0!important;
+    overflow:hidden!important;
+  }
+  .spec-box{
+    padding:.5px 2.5px!important;
+    border-radius:1.5pt!important;
+    display:flex!important;
+    gap:1.5px!important;
+    align-items:baseline!important;
+    flex-shrink:0!important;
+  }
+  .spec-label{ font-size:5pt!important; color:#7a6248!important; white-space:nowrap!important; }
+  .spec-val{ font-size:6pt!important; color:#1a1208!important; font-weight:500!important; white-space:nowrap!important; }
+
+  /* 갈색 바: inline-block 방식으로 텍스트 높이만큼만 */
+  .p-desc-wrap{
+    display:inline-flex!important;
+    gap:1.5mm!important;
+    overflow:hidden!important;
+    align-self:flex-start!important;
+    max-height:100%!important;
+  }
+  .p-desc-bar{
+    width:1.2pt!important;
+    background:#c8963c!important;
+    flex-shrink:0!important;
+    align-self:stretch!important;
+    border-radius:1pt!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  .p-desc{
+    flex:1!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    font-size:7pt!important;
+    line-height:1.6!important;
+    color:#3d2f1a!important;
+    display:block!important;
+    -webkit-line-clamp:unset!important;
+    padding-left:0!important;
+    border-left:none!important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 </head>
 <body>
@@ -673,10 +831,9 @@ function generateProposal() {
         ${p.price?`<div class="p-img-price">${fmtPrice(p.price)}</div>`:''}
       </div>
       <div>
-        <div class="p-name">${p.name}</div>
-        <div class="p-sub-row"><span class="p-grade">${p.grade}</span><span class="p-name-jp">${p.nameJp}</span></div>
+        <div class="p-name-row"><span class="p-name">${p.name}</span><span class="p-name-jp">${p.nameJp}</span><span class="p-grade">${p.grade}</span></div>
         <div class="p-specs">${specsNoPrice.map(s=>`<div class="spec-box"><span class="spec-label">${s.label}</span><span class="spec-val ${s.cls||''}">${s.value}</span></div>`).join('')}</div>
-        <div class="p-desc">${p.desc}</div>
+        <div class="p-desc-wrap"><span class="p-desc-bar"></span><span class="p-desc">${p.desc}</span></div>
       </div>
     </div>`;
   }).join('');
@@ -736,7 +893,7 @@ function exportHTML() {
     .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
     .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:#1a1208;color:#f7f3ec;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
     .p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2)}
-    .p-name{font-family:'Noto Serif KR',serif;font-size:.88rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.2rem}
+    .p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.25rem}
     .p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
     .p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
     .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
@@ -745,15 +902,8 @@ function exportHTML() {
     .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
     .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
     .spec-val.price{color:var(--gold2)}
-    .p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-    @media print{
-      @page{margin:8mm 10mm}
-      .prop-cover{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;background:#1a1208!important}
-      .prop-item{break-inside:avoid;grid-template-columns:62px 1fr!important;gap:.5rem!important;padding:.3rem 0!important}
-      .p-name{font-size:.72rem!important}
-      .spec-label{font-size:.45rem!important}.spec-val{font-size:.58rem!important}
-      .p-desc{-webkit-line-clamp:2!important;font-size:.56rem!important}
-    }
+    .p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+    
   `;
 
   const doc = `<!DOCTYPE html>
