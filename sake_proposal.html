@@ -395,48 +395,30 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 
 <div id="loading">
   <div class="loading-kanji">提案</div>
-  <div class="loading-txt">이미지 불러오는 중...</div>
+  <div class="loading-txt">데이터 불러오는 중...</div>
 </div>
 
 <!-- SETUP -->
-<div id="setup">
-  <div class="setup-card">
-    <div class="setup-logo">提案</div>
-    <div class="setup-title">사케 상품 제안서</div>
-    <div class="setup-sub">엑셀은 매번 업로드 · 이미지는 한 번만 저장됩니다</div>
-
-    <!-- 엑셀 (매번) -->
-    <div class="section-divider">엑셀 — 매번 업로드</div>
-    <div class="upload-zone" id="xlsx-zone">
+<!-- 엑셀 업로드 모달 -->
+<div id="xlsx-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+    <div style="font-family:'Shippori Mincho',serif;font-size:1.8rem;color:rgba(26,18,8,.15);text-align:center;margin-bottom:.3rem">提案</div>
+    <div style="font-family:'Noto Serif KR',serif;font-size:1.1rem;font-weight:600;text-align:center;color:var(--ink);margin-bottom:.3rem">엑셀 업로드</div>
+    <div style="font-size:.75rem;color:var(--ink3);text-align:center;margin-bottom:1.5rem">단가 상품정보 엑셀을 업로드하세요</div>
+    <div class="upload-zone" id="xlsx-zone" style="margin-bottom:1rem">
       <input type="file" accept=".xlsx,.xls" onchange="handleXlsx(this.files[0])"/>
       <div class="upload-icon">📊</div>
-      <div class="upload-label">단가 상품정보 엑셀</div>
+      <div class="upload-label">엑셀 파일 업로드</div>
       <div class="upload-hint">.xlsx 파일을 클릭하거나 드래그하세요</div>
       <div class="upload-status" id="xlsx-status"></div>
     </div>
-
-    <!-- 이미지 (저장됨) -->
-    <div class="section-divider">이미지 — 브라우저에 저장</div>
-    <div id="img-saved-row" class="img-saved-row" style="display:none;visibility:hidden">
-      <span id="img-saved-txt"></span>
-      <button onclick="clearImages()">이미지 초기화</button>
-    </div>
-    <div class="upload-zone" id="img-zone">
-      <input type="file" accept="image/*" multiple onchange="handleImages(this.files)"/>
-      <div class="upload-icon">🖼️</div>
-      <div class="upload-label" id="img-label">상품 이미지 업로드</div>
-      <div class="upload-hint">여러 장 동시 선택 · 파일명 = 상품명으로 자동 매칭</div>
-      <div class="upload-status" id="img-status"></div>
-      <div class="progress-wrap" id="progress-wrap">
-        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-      </div>
-    </div>
-
-    <button class="btn-start" id="btn-start" onclick="startApp()" disabled>제안서 만들기 →</button>
+    <button class="btn-start" id="btn-start" onclick="closeXlsxModal()" disabled>확인 →</button>
+    <button onclick="closeXlsxModal()" style="width:100%;margin-top:.5rem;padding:8px;background:transparent;border:none;color:var(--ink3);font-size:.8rem;cursor:pointer;font-family:'Noto Sans KR',sans-serif">취소</button>
   </div>
 </div>
 
 <!-- EDITOR -->
+
 <div id="editor">
   <div class="ed-header">
     <div class="ed-header-row">
@@ -517,15 +499,23 @@ let db = null;
 
 function openDB() {
   return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
+    const req = indexedDB.open(DB_NAME, 2);
     req.onupgradeneeded = e => {
       const d = e.target.result;
-      if (!d.objectStoreNames.contains('images')) d.createObjectStore('images', {keyPath:'name'});
-      if (!d.objectStoreNames.contains('meta'))   d.createObjectStore('meta',   {keyPath:'key'});
+      if (!d.objectStoreNames.contains('images'))   d.createObjectStore('images',   {keyPath:'name'});
+      if (!d.objectStoreNames.contains('meta'))     d.createObjectStore('meta',     {keyPath:'key'});
+      if (!d.objectStoreNames.contains('products')) d.createObjectStore('products', {keyPath:'id'});
     };
     req.onsuccess = e => { db = e.target.result; res(); };
     req.onerror   = e => rej(e.target.error);
   });
+}
+
+function dbPutProduct(p) {
+  return new Promise((res,rej) => { const r=tx('products','readwrite').put(p); r.onsuccess=res; r.onerror=e=>rej(e.target.error); });
+}
+function dbClearProducts() {
+  return new Promise((res,rej) => { const r=tx('products','readwrite').clear(); r.onsuccess=res; r.onerror=e=>rej(e.target.error); });
 }
 const tx  = (store, mode='readonly') => db.transaction(store, mode).objectStore(store);
 const put = (store, data) => new Promise((res,rej) => { const r=tx(store,'readwrite').put(data); r.onsuccess=res; r.onerror=e=>rej(e.target.error); });
@@ -541,22 +531,37 @@ let selected    = new Set();
 /* ── 초기화: 저장된 이미지 불러오기 ── */
 async function init() {
   await openDB();
-  const imgs = await getAll('images');
-  imgs.forEach(img => { imageMap[img.name] = img.dataUrl; });
 
-  const meta = await getMeta('imgInfo');
-  const count = Object.keys(imageMap).length;
-
-  if (count > 0) {
-    document.getElementById('img-saved-row').style.display = 'flex';
-    document.getElementById('img-saved-txt').textContent =
-      `이미지 ${count}장 저장됨 ${meta ? '('+meta.savedAt+')' : ''}`;
-    document.getElementById('img-label').textContent = '이미지 추가 / 교체';
-    document.getElementById('img-zone').classList.add('done');
+  // 저장된 상품 데이터 불러오기
+  const savedProducts = await getAll('products');
+  if (savedProducts && savedProducts.length > 0) {
+    allProducts = savedProducts.sort((a,b) => a.id - b.id);
+    buildFilters();
+    renderGrid(allProducts);
+    document.getElementById('genmonth').value = new Date().toISOString().slice(0,7);
+    const meta = await getMeta('xlsxInfo');
+    document.getElementById('ed-meta').textContent =
+      `상품 ${allProducts.length}개${meta ? ' · ' + meta.savedAt : ''}`;
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('editor').style.display = 'flex';
+  } else {
+    // 저장된 데이터 없으면 엑셀 업로드 모달 표시
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('editor').style.display = 'flex';
+    document.getElementById('xlsx-modal').style.display = 'flex';
   }
+}
 
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('setup').style.display = 'flex';
+function openXlsxModal() {
+  document.getElementById('xlsx-status').textContent = '';
+  document.getElementById('xlsx-zone').classList.remove('done');
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('xlsx-modal').style.display = 'flex';
+}
+
+function closeXlsxModal() {
+  if (!allProducts.length) return;
+  document.getElementById('xlsx-modal').style.display = 'none';
 }
 
 /* ── 엑셀 처리 (매번) ── */
@@ -601,9 +606,18 @@ function handleXlsx(file) {
         });
       }
 
+      // IndexedDB에 저장
+      await dbClearProducts();
+      for (const p of allProducts) { await dbPutProduct(p); }
+      const now = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      await put('meta', {key:'xlsxInfo', count:allProducts.length, savedAt:now});
+
       document.getElementById('xlsx-status').textContent = `✓ ${allProducts.length}개 상품 로드됨`;
       document.getElementById('xlsx-zone').classList.add('done');
       document.getElementById('btn-start').disabled = false;
+      document.getElementById('ed-meta').textContent = `상품 ${allProducts.length}개 · ${now}`;
+      buildFilters();
+      renderGrid(allProducts);
     } catch(err) { alert('엑셀 읽기 오류: ' + err.message); }
   };
   reader.readAsArrayBuffer(file);
@@ -677,11 +691,7 @@ function startApp() {
 }
 
 function goSetup() {
-  selected.clear();
-  document.getElementById('sel-badge').textContent = '0';
-  document.getElementById('editor').style.display   = 'none';
-  document.getElementById('proposal').style.display = 'none';
-  document.getElementById('setup').style.display    = 'flex';
+  openXlsxModal();
 }
 
 /* ── 필터 & 그리드 ── */
