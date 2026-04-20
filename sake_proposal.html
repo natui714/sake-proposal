@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>사케 상품 제안서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{
+  --ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;
+  --paper:#f7f3ec;--paper2:#ede8de;--paper3:#ddd8cc;
+  --gold:#c8963c;--gold2:#a87830;
+  --border:rgba(26,18,8,0.1);--border2:rgba(26,18,8,0.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--ink);min-height:100vh}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;z-index:999}
+.loading-kanji{font-family:'Shippori Mincho',serif;font-size:3rem;color:var(--border2);letter-spacing:.3em;animation:pulse 1.5s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
+.loading-txt{font-size:.82rem;color:var(--ink3)}
+
+/* SETUP */
+#setup{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.setup-card{background:#fff;border:1px solid var(--border2);border-radius:16px;padding:2.5rem;max-width:520px;width:100%}
+.setup-logo{font-family:'Shippori Mincho',serif;font-size:3rem;color:var(--border2);text-align:center;letter-spacing:.3em;margin-bottom:.5rem}
+.setup-title{font-family:'Noto Serif KR',serif;font-size:1.3rem;font-weight:600;text-align:center;color:var(--ink);margin-bottom:.3rem}
+.setup-sub{font-size:.78rem;color:var(--ink3);text-align:center;margin-bottom:2rem;font-weight:300}
+
+.section-divider{font-size:.67rem;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:.9rem}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+.upload-zone{
+  border:1.5px dashed var(--border2);border-radius:10px;
+  padding:1.4rem;text-align:center;cursor:pointer;
+  transition:border-color .2s,background .2s;margin-bottom:1rem;
+  position:relative;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--gold);background:#fdf8f0}
+.upload-zone.done{border-color:var(--gold);border-style:solid;background:#fdf6e8}
+.upload-zone input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.upload-icon{font-size:1.8rem;margin-bottom:.35rem}
+.upload-label{font-size:.84rem;font-weight:500;color:var(--ink);margin-bottom:.2rem}
+.upload-hint{font-size:.71rem;color:var(--ink3);line-height:1.5}
+.upload-status{font-size:.78rem;color:var(--gold2);font-weight:500;margin-top:.4rem;min-height:1.2em}
+
+.img-saved-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fdf6e8;border:1px solid var(--gold);border-radius:8px;
+  padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;
+}
+.img-saved-row span{color:var(--gold2);font-weight:500}
+.img-saved-row button{
+  font-size:.7rem;color:var(--ink3);background:transparent;
+  border:1px solid var(--border2);border-radius:4px;
+  padding:3px 8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;
+}
+.img-saved-row button:hover{border-color:var(--ink3)}
+
+.progress-wrap{margin-top:.5rem;display:none}
+.progress-bar{height:3px;background:var(--paper3);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .08s}
+
+.btn-start{
+  width:100%;padding:12px;border-radius:8px;border:none;
+  background:var(--ink);color:var(--paper);
+  font-family:'Noto Sans KR',sans-serif;font-size:.95rem;font-weight:500;
+  cursor:pointer;transition:background .2s;margin-top:.5rem;
+}
+.btn-start:hover{background:var(--ink2)}
+.btn-start:disabled{background:var(--paper3);color:var(--ink3);cursor:not-allowed}
+
+/* EDITOR */
+#editor{min-height:100vh;display:none;flex-direction:column}
+.ed-header{background:var(--ink);color:var(--paper);padding:1.5rem 2.5rem;position:relative;overflow:hidden}
+.ed-header::before{content:'提案';position:absolute;right:1.5rem;top:-.5rem;font-family:'Shippori Mincho',serif;font-size:7rem;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;user-select:none}
+.ed-header-row{display:flex;align-items:center;justify-content:space-between}
+.ed-header h1{font-family:'Noto Serif KR',serif;font-size:1.3rem;font-weight:600;letter-spacing:.05em}
+.ed-actions{display:flex;gap:8px;align-items:center}
+.ed-meta{font-size:.7rem;color:rgba(247,243,236,.35);margin-right:4px}
+.btn-sm{font-size:.72rem;color:rgba(247,243,236,.5);background:transparent;border:1px solid rgba(247,243,236,.2);border-radius:5px;padding:5px 10px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap}
+.btn-sm:hover{color:rgba(247,243,236,.9);border-color:rgba(247,243,236,.5)}
+
+.ed-body{flex:1;padding:1.4rem 2rem;max-width:1100px;width:100%;margin:0 auto}
+.info-panel{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:1.4rem}
+.fg label{display:block;font-size:.67rem;font-weight:500;color:var(--ink3);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.fg input{width:100%;padding:9px 13px;border:1px solid var(--border2);border-radius:6px;background:var(--paper);font-family:'Noto Sans KR',sans-serif;font-size:.88rem;color:var(--ink);outline:none;transition:border-color .2s}
+.fg input:focus{border-color:var(--gold)}
+
+.sec-label{font-size:.67rem;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.7rem;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+.filter-bar{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:13px;height:13px;stroke:var(--ink3);fill:none;stroke-width:2;stroke-linecap:round}
+.search-wrap input{width:100%;padding:8px 12px 8px 33px;border:1px solid var(--border2);border-radius:6px;background:var(--paper);font-family:'Noto Sans KR',sans-serif;font-size:.86rem;color:var(--ink);outline:none;transition:border-color .2s}
+.search-wrap input:focus{border-color:var(--gold)}
+.search-wrap input::placeholder{color:var(--ink3)}
+.filter-select{padding:8px 12px;border:1px solid var(--border2);border-radius:6px;background:var(--paper);font-family:'Noto Sans KR',sans-serif;font-size:.84rem;color:var(--ink);outline:none;cursor:pointer}
+.filter-select:focus{border-color:var(--gold)}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(126px,1fr));gap:9px;max-height:400px;overflow-y:auto;padding-right:3px}
+.product-grid::-webkit-scrollbar{width:4px}
+.product-grid::-webkit-scrollbar-track{background:var(--paper2);border-radius:2px}
+.product-grid::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+.prod-card{border:1px solid var(--border2);border-radius:8px;background:var(--paper);padding:9px;cursor:pointer;transition:border-color .2s,background .15s,transform .15s;display:flex;flex-direction:column;gap:5px;position:relative}
+.prod-card:hover{border-color:var(--gold);transform:translateY(-1px);background:#fdf8f0}
+.prod-card.sel{border-color:var(--gold);background:#fdf6e8}
+.prod-card.sel::after{content:'✓';position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gold2);font-weight:700}
+.prod-img-wrap{width:100%;aspect-ratio:1/1.3;background:var(--paper2);border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.prod-img-wrap img{width:100%;height:100%;object-fit:contain}
+.prod-img-ph{font-size:2rem;color:var(--paper3)}
+.prod-name{font-size:.69rem;font-weight:500;color:var(--ink);line-height:1.35}
+.prod-grade{font-size:.61rem;color:var(--ink3)}
+.prod-price{font-size:.67rem;color:var(--gold2);font-weight:500}
+
+.sel-info{margin-top:.7rem;font-size:.77rem;color:var(--ink3);display:flex;align-items:center;gap:8px}
+.sel-badge{background:var(--gold);color:#fff;font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:99px}
+.no-result{grid-column:1/-1;text-align:center;padding:2.5rem;font-size:.85rem;color:var(--ink3)}
+
+.sel-tags{display:flex;flex-wrap:wrap;gap:6px}
+.sel-tag{display:flex;align-items:center;gap:4px;background:#fdf6e8;border:1px solid var(--gold);border-radius:99px;padding:3px 8px 3px 8px;font-size:.72rem;color:var(--ink2);cursor:grab;user-select:none;transition:opacity .15s,box-shadow .15s}
+.sel-tag:hover{box-shadow:0 1px 4px rgba(200,150,60,.3)}
+.sel-tag-drag{font-size:.7rem;color:var(--ink3);cursor:grab}
+.sel-tag-num{font-size:.62rem;font-weight:700;color:var(--gold2);min-width:12px}
+.sel-tag-name{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sel-tag-vol{font-size:.63rem;color:var(--ink3)}
+.sel-tag-remove{width:14px;height:14px;border-radius:50%;background:var(--paper3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--ink3);line-height:1;padding:0;flex-shrink:0}
+.sel-tag-remove:hover{background:var(--gold);color:#fff}
+.ed-footer{background:var(--ink);padding:.9rem 2rem;display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0}
+.btn{padding:8px 18px;border-radius:6px;font-size:.83rem;font-family:'Noto Sans KR',sans-serif;font-weight:500;cursor:pointer;border:1px solid rgba(247,243,236,.25);color:var(--paper);background:transparent;transition:background .2s}
+.btn:hover{background:rgba(247,243,236,.1)}
+.btn-gold{background:var(--gold);border-color:var(--gold);color:#fff}
+.btn-gold:hover{background:var(--gold2);border-color:var(--gold2)}
+
+/* PROPOSAL */
+#proposal{display:none;background:var(--paper);min-height:100vh}
+.prop-nav{background:var(--ink);padding:.85rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.prop-nav>span{font-size:.77rem;color:rgba(247,243,236,.5)}
+.prop-nav-btns{display:flex;gap:8px}
+.prop-inner{max-width:860px;margin:0 auto;padding:1.2rem 2rem 3rem}
+.prop-cover{
+  background:var(--ink);border-radius:8px;
+  padding:.8rem 1.5rem;margin-bottom:1rem;
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact;
+}
+.cover-left{display:flex;align-items:center}
+.cover-main-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.cover-company{
+  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;
+  color:#fff;letter-spacing:.22em;line-height:1;text-transform:uppercase;
+  text-shadow:0 0 20px rgba(200,150,60,.4);
+}
+.cover-kanji{
+  font-family:'Shippori Mincho',serif;font-size:.9rem;
+  color:rgba(247,243,236,.35);letter-spacing:.08em;
+}
+.cover-vsep{
+  width:1px;height:1.1rem;background:rgba(247,243,236,.25);flex-shrink:0;
+}
+.cover-biz-name{
+  font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;
+  color:#fff;letter-spacing:.02em;line-height:1.2;
+}
+.cover-right{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
+.cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
+.cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
+.cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
+.p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
+.prop-item{display:grid;grid-template-columns:110px 1fr;gap:1rem;padding:.75rem 0;border-bottom:none;page-break-inside:avoid}
+.prop-item:last-child{border-bottom:none}
+.p-img-col{display:flex;flex-direction:column;gap:.3rem}
+.p-img-wrap{position:relative}
+.p-img-wrap img{width:100%;aspect-ratio:2/3;object-fit:contain;border-radius:5px;background:var(--paper2);display:block}
+.p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
+.p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:var(--ink);color:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
+.p-img-price{text-align:center;font-size:.82rem;font-weight:700;color:var(--gold2);margin-top:.25rem}
+.p-name-row{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;margin-bottom:.3rem}
+.p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3}
+.p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
+.p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
+.p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
+.p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.4rem}
+.spec-box{background:var(--paper2);border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
+.spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
+.spec-val.price{color:var(--gold2)}
+.p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+
+
+
+@media(max-width:640px){
+  .info-panel{grid-template-columns:1fr 1fr}
+  .prop-item{grid-template-columns:130px 1fr;gap:1.2rem}
+  .p-specs{grid-template-columns:repeat(2,1fr)}
+  .ed-body{padding:1rem}
+}
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:8mm 12mm;
+  }
+
+  #editor,#setup,#loading{ display:none!important }
+  #proposal{ display:block!important }
+  .prop-nav{ display:none!important }
+
+  /* 헤더: 모든 페이지 반복은 running element 방식 대신
+     첫 페이지만 표시하고 이후 페이지는 @page margin으로 공간만 확보 */
+  .prop-cover{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    background:#1a1208!important;
+    border-radius:6px!important;
+    margin-bottom:4mm!important;
+    break-after:avoid!important;
+  }
+
+  .prop-inner{
+    max-width:100%!important;
+    padding:0!important;
+  }
+
+  .spec-box{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+    background:#f0ece4!important;
+  }
+
+  /* 2단 */
+  .p-items-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:0 12mm!important;
+  }
+
+  /* 카드: A4가로 유효높이(194mm) - 헤더(16mm) - 마진(4mm) = 174mm / 5행 = 34.8mm */
+  .prop-item{
+    height:34mm!important;
+    overflow:hidden!important;
+    break-inside:avoid!important;
+    display:grid!important;
+    grid-template-columns:20mm 1fr!important;
+    gap:2.5mm!important;
+    padding:1.5mm 0!important;
+    border-bottom:.3pt solid rgba(26,18,8,0.1)!important;
+    position:relative!important;
+    box-sizing:border-box!important;
+  }
+  .prop-item:last-child{ border-bottom:none!important; }
+
+  .p-num{
+    position:absolute!important; top:1.5mm!important; left:0!important;
+    width:3.5mm!important; height:3.5mm!important; font-size:4.5pt!important;
+    background:#1a1208!important; color:#fff!important; border-radius:50%!important;
+    display:flex!important; align-items:center!important; justify-content:center!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  .p-img-col{
+    width:20mm!important;
+    height:31mm!important;
+    display:flex!important;
+    flex-direction:column!important;
+    padding-top:2.5mm!important;
+    box-sizing:border-box!important;
+  }
+  .p-img-wrap{
+    flex:1!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+  .p-img-wrap img{
+    width:100%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    display:block!important;
+  }
+  .p-img-price{
+    font-size:9pt!important;
+    font-weight:700!important;
+    color:#a87830!important;
+    text-align:center!important;
+    margin-top:.5mm!important;
+    flex-shrink:0!important;
+    display:block!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  .prop-item > div:last-child{
+    height:31mm!important;
+    display:flex!important;
+    flex-direction:column!important;
+    overflow:hidden!important;
+    padding-top:1.5mm!important;
+    box-sizing:border-box!important;
+  }
+
+  .p-name-row{
+    display:flex!important;
+    align-items:baseline!important;
+    gap:1mm!important;
+    flex-wrap:wrap!important;
+    margin-bottom:.4mm!important;
+    flex-shrink:0!important;
+  }
+  .p-name{ font-size:8.5pt!important; font-weight:700!important; line-height:1.2!important; }
+  .p-name-jp{ font-size:6pt!important; color:#7a6248!important; }
+  .p-grade{
+    font-size:5.5pt!important; padding:.3mm 1.5mm!important;
+    border:.3pt solid #c8963c!important; color:#a87830!important;
+    border-radius:2pt!important; white-space:nowrap!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+
+  .p-specs{
+    display:flex!important;
+    flex-wrap:nowrap!important;
+    gap:1.5px!important;
+    margin-bottom:.4mm!important;
+    flex-shrink:0!important;
+    overflow:hidden!important;
+  }
+  .spec-box{
+    padding:.5px 2.5px!important;
+    border-radius:1.5pt!important;
+    display:flex!important;
+    gap:1.5px!important;
+    align-items:baseline!important;
+    flex-shrink:0!important;
+  }
+  .spec-label{ font-size:5pt!important; color:#7a6248!important; white-space:nowrap!important; }
+  .spec-val{ font-size:6pt!important; color:#1a1208!important; font-weight:500!important; white-space:nowrap!important; }
+
+  /* 갈색 바: inline-block 방식으로 텍스트 높이만큼만 */
+  .p-desc-wrap{
+    display:inline-flex!important;
+    gap:1.5mm!important;
+    overflow:hidden!important;
+    align-self:flex-start!important;
+    max-height:100%!important;
+  }
+  .p-desc-bar{
+    width:1.2pt!important;
+    background:#c8963c!important;
+    flex-shrink:0!important;
+    align-self:stretch!important;
+    border-radius:1pt!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  .p-desc{
+    flex:1!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    font-size:7pt!important;
+    line-height:1.6!important;
+    color:#3d2f1a!important;
+    display:block!important;
+    -webkit-line-clamp:unset!important;
+    padding-left:0!important;
+    border-left:none!important;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loading-kanji">提案</div>
+  <div class="loading-txt" id="loading-txt">데이터 불러오는 중...</div>
+</div>
+
+<!-- SETUP -->
+<!-- 엑셀 업로드 모달 -->
+<div id="xlsx-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+    <div style="font-family:'Shippori Mincho',serif;font-size:1.8rem;color:rgba(26,18,8,.15);text-align:center;margin-bottom:.3rem">提案</div>
+    <div style="font-family:'Noto Serif KR',serif;font-size:1.1rem;font-weight:600;text-align:center;color:var(--ink);margin-bottom:.3rem">엑셀 업로드</div>
+    <div style="font-size:.75rem;color:var(--ink3);text-align:center;margin-bottom:1.5rem">단가 상품정보 엑셀을 업로드하세요</div>
+    <div class="upload-zone" id="xlsx-zone" style="margin-bottom:1rem">
+      <input type="file" accept=".xlsx,.xls" onchange="handleXlsx(this.files[0])"/>
+      <div class="upload-icon">📊</div>
+      <div class="upload-label">엑셀 파일 업로드</div>
+      <div class="upload-hint">.xlsx 파일을 클릭하거나 드래그하세요</div>
+      <div class="upload-status" id="xlsx-status"></div>
+    </div>
+    <button class="btn-start" id="btn-start" onclick="closeXlsxModal()" disabled>확인 →</button>
+    <button onclick="closeXlsxModal()" style="width:100%;margin-top:.5rem;padding:8px;background:transparent;border:none;color:var(--ink3);font-size:.8rem;cursor:pointer;font-family:'Noto Sans KR',sans-serif">취소</button>
+  </div>
+</div>
+
+<!-- EDITOR -->
+
+<div id="editor">
+  <div class="ed-header">
+    <div class="ed-header-row">
+      <h1>사케 상품 제안서</h1>
+      <div class="ed-actions">
+        <span class="ed-meta" id="ed-meta"></span>
+        <button class="btn-sm" onclick="goSetup()">↩ 엑셀 다시 업로드</button>
+      </div>
+    </div>
+  </div>
+  <div class="ed-body">
+    <div class="info-panel">
+      <div class="fg"><label>업장명</label><input type="text" id="bizname" placeholder="예) 이자카야 하나"/></div>
+      <div class="fg"><label>생성월</label><input type="month" id="genmonth"/></div>
+      <div class="fg"><label>담당 영업사원</label><input type="text" id="sales-name" placeholder="홍길동"/></div>
+      <div class="fg"><label>연락처</label><input type="text" id="sales-tel" placeholder="010-0000-0000"/></div>
+    </div>
+    <div class="sec-label">상품 선택</div>
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="search" placeholder="상품명 검색 (한글/일본어)" oninput="filterProducts()"/>
+      </div>
+      <select class="filter-select" id="grade-filter" onchange="filterProducts()"><option value="">등급 전체</option></select>
+      <select class="filter-select" id="style-filter" onchange="filterProducts()"><option value="">주질 전체</option></select>
+    </div>
+    <div class="product-grid" id="product-grid"></div>
+    <div class="sel-info">선택된 상품 <span class="sel-badge" id="sel-badge">0</span>개</div>
+    <div id="sel-panel" style="display:none;margin-top:.8rem">
+      <div class="sec-label" style="margin-bottom:.5rem">선택된 상품</div>
+      <div id="sel-tags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      <div style="font-size:.65rem;color:var(--ink3);margin-top:.4rem">드래그해서 순서 변경</div>
+    </div>
+  </div>
+  <div class="ed-footer">
+    <button class="btn" onclick="resetAll()">초기화</button>
+    <button class="btn btn-gold" onclick="generateProposal()">제안서 생성 →</button>
+  </div>
+</div>
+
+<!-- PROPOSAL -->
+<div id="proposal">
+  <div class="prop-nav">
+    <span id="p-nav-title">제안서</span>
+    <div class="prop-nav-btns">
+      <button class="btn" onclick="backToEditor()">← 편집으로</button>
+      <button class="btn" onclick="exportHTML()">📤 HTML로 저장</button>
+      <button class="btn btn-gold" onclick="window.print()">인쇄 / PDF 저장</button>
+    </div>
+  </div>
+  <div class="prop-inner">
+    <div class="prop-cover">
+      <div class="cover-left">
+        <div class="cover-main-row">
+          <span class="cover-company">ILOSAKE</span>
+          <span class="cover-kanji">提案書</span>
+          <span class="cover-vsep"></span>
+          <span class="cover-biz-name" id="p-title"></span>
+        </div>
+      </div>
+      <div class="cover-right">
+        <div class="cover-date-row" id="p-meta-date"></div>
+        <div class="cover-sales-row">
+          <span id="p-meta-name"></span>
+          <span class="cover-hsep">ㅣ</span>
+          <span id="p-meta-tel"></span>
+        </div>
+      </div>
+    </div>
+    <div class="p-items-grid" id="p-items"></div>
+  </div>
+</div>
+
+<script>
+/* ── IndexedDB (이미지만) ── */
+
+
+/* ── 상태 ── */
+let allProducts = [];
+let imageMap    = {};   // name → dataURL
+let selected    = new Set();
+
+/* ── 초기화: 저장된 이미지 불러오기 ── */
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIrUz9nOYixf105xs9NxyABmpWptkUWGkDzr9pqxz2H78jh-8wOrSWlVu2Mff71yGUG28YbjP578f/pub?output=csv';
+
+async function init() {
+  try {
+    await loadFromSheet();
+  } catch(e) {
+    console.error('시트 로드 실패:', e);
+    document.getElementById('loading-txt').textContent = '데이터 로드 실패. 새로고침 해주세요.';
+    return;
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
+}
+
+async function loadFromSheet() {
+  document.getElementById('loading-txt').textContent = '상품 데이터 불러오는 중...';
+  const res = await fetch(CSV_URL);
+  if (!res.ok) throw new Error('fetch 실패');
+  const text = await res.text();
+  allProducts = parseCSV(text);
+  buildFilters();
+  renderGrid(allProducts);
+  document.getElementById('genmonth').value = new Date().toISOString().slice(0,7);
+  document.getElementById('ed-meta').textContent = `상품 ${allProducts.length}개`;
+}
+
+function parseCSV(text) {
+  const lines = text.replace(//g,'').split('\n');
+  const products = [];
+  for (let i = 1; i < lines.length; i++) {
+    if (!lines[i].trim()) continue;
+    const r = parseCSVRow(lines[i]);
+    const name = (r[1]||'').trim();
+    if (!name || name === '상품명') continue;
+    let rice = parseFloat(r[8]);
+    if (rice > 0 && rice < 1) rice = Math.round(rice * 100);
+    else rice = Math.round(rice) || 0;
+    let price = parseInt((r[4]||'').replace(/[^0-9]/g,'')) || 0;
+    let alc = parseFloat(r[5]) || 0;
+    products.push({
+      id: products.length,
+      name,
+      nameJp: (r[2]||'').trim(),
+      vol:    r[3] ? String(Math.round(parseFloat(r[3])||0)) : '',
+      price:  price ? String(price) : '',
+      alc:    alc ? String(alc) : '',
+      grade:  (r[6]||'').trim(),
+      style:  (r[7]||'').trim(),
+      rice:   rice ? String(rice) : '',
+      ingr:   (r[9]||'').trim(),
+      region: (r[10]||'').trim(),
+      desc:   (r[11]||'').replace(/\n/g,'<br>').trim(),
+    });
+  }
+  return products;
+}
+
+function parseCSVRow(row) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < row.length; i++) {
+    const c = row[i];
+    if (c === '"' && row[i+1] === '"') { cur += '"'; i++; }
+    else if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur);
+  return result;
+}
+
+
+function openXlsxModal() {
+  document.getElementById('xlsx-status').textContent = '';
+  document.getElementById('xlsx-zone').classList.remove('done');
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('xlsx-modal').style.display = 'flex';
+}
+
+function closeXlsxModal() {
+  if (!allProducts.length) return;
+  document.getElementById('xlsx-modal').style.display = 'none';
+}
+
+/* ── 엑셀 처리 (매번) ── */
+function handleXlsx(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb   = XLSX.read(e.target.result, {type:'array'});
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+      allProducts = [];
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const name = String(r[1]||'').trim();
+        if (!name) continue;
+
+        let rice = r[8];
+        if (typeof rice==='number' && rice>0 && rice<1) rice = Math.round(rice*100);
+        else if (typeof rice==='number') rice = Math.round(rice);
+
+        let price = r[4];
+        if (typeof price==='number') price = Math.round(price);
+
+        let alc = r[5];
+        if (typeof alc==='number' && alc===Math.floor(alc)) alc = Math.floor(alc);
+
+        allProducts.push({
+          id: allProducts.length,
+          name,
+          nameJp: String(r[2]||'').trim(),
+          vol:    r[3] ? String(Math.round(Number(r[3]))) : '',
+          price:  price ? String(price) : '',
+          alc:    alc!=='' ? String(alc) : '',
+          grade:  String(r[6]||'').trim(),
+          style:  String(r[7]||'').trim(),
+          rice:   rice!=='' ? String(rice) : '',
+          ingr:   String(r[9]||'').trim(),
+          region: String(r[10]||'').trim(),
+          desc:   String(r[11]||'').replace(/\n/g,'<br>').trim(),
+        });
+      }
+
+      const now = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      document.getElementById('xlsx-status').textContent = `✓ ${allProducts.length}개 상품 로드됨`;
+      document.getElementById('xlsx-zone').classList.add('done');
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('ed-meta').textContent = `상품 ${allProducts.length}개 · ${now}`;
+      buildFilters();
+      renderGrid(allProducts);
+    } catch(err) { alert('엑셀 읽기 오류: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ── 이미지 처리 (저장) ── */
+async function handleImages(files) {
+  const arr = Array.from(files);
+  const total = arr.length;
+  let done = 0;
+
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('img-status').textContent = '';
+
+  for (const file of arr) {
+    await new Promise(res => {
+      const key = file.name.replace(/\.[^.]+$/,'').trim();
+      const reader = new FileReader();
+      reader.onload = async ev => {
+        imageMap[key] = ev.target.result;
+        await put('images', {name: key, dataUrl: ev.target.result});
+        done++;
+        document.getElementById('progress-fill').style.width = (done/total*100)+'%';
+        document.getElementById('img-status').textContent = `${done} / ${total}장 저장 중...`;
+        res();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const now = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+  await put('meta', {key:'imgInfo', count: Object.keys(imageMap).length, savedAt: now});
+
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('img-status').textContent = `✓ ${total}장 저장 완료`;
+  document.getElementById('img-zone').classList.add('done');
+  document.getElementById('img-saved-row').style.display = 'flex';
+  document.getElementById('img-saved-txt').textContent = `이미지 ${Object.keys(imageMap).length}장 저장됨 (${now})`;
+  document.getElementById('img-label').textContent = '이미지 추가 / 교체';
+}
+
+async function clearImages() {
+  if (!confirm('저장된 이미지를 모두 삭제할까요?')) return;
+  await clearStore('images');
+  await clearStore('meta');
+  imageMap = {};
+  document.getElementById('img-saved-row').style.display = 'none';
+  document.getElementById('img-zone').classList.remove('done');
+  document.getElementById('img-status').textContent = '';
+  document.getElementById('img-label').textContent = '상품 이미지 업로드';
+}
+
+/* ── 이미지 매칭 ── */
+const GITHUB_IMG = 'https://natui714.github.io/sake-proposal/';
+
+function findImg(name) {
+  // 깃허브 이미지 URL 자동 생성 (상품명.png)
+  return GITHUB_IMG + encodeURIComponent(name) + '.png';
+}
+
+/* ── 앱 시작 ── */
+function startApp() {
+  if (!allProducts.length) return;
+  buildFilters();
+  renderGrid(allProducts);
+  document.getElementById('genmonth').value = new Date().toISOString().slice(0,7);
+  document.getElementById('ed-meta').textContent =
+    `상품 ${allProducts.length}개 · 이미지 ${Object.keys(imageMap).length}장`;
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
+}
+
+function goSetup() {
+  openXlsxModal();
+}
+
+/* ── 필터 & 그리드 ── */
+function buildFilters() {
+  const grades = [...new Set(allProducts.map(p=>p.grade).filter(Boolean))].sort();
+  const styles = [...new Set(allProducts.map(p=>p.style).filter(Boolean))].sort();
+  const gSel = document.getElementById('grade-filter');
+  const sSel = document.getElementById('style-filter');
+  gSel.innerHTML = '<option value="">등급 전체</option>';
+  sSel.innerHTML = '<option value="">주질 전체</option>';
+  grades.forEach(g=>{const o=document.createElement('option');o.value=g;o.textContent=g;gSel.appendChild(o)});
+  styles.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sSel.appendChild(o)});
+}
+
+function fmtPrice(raw) {
+  const n = parseInt(String(raw||''));
+  return n ? n.toLocaleString('ko-KR')+'원' : (raw||'');
+}
+
+function renderGrid(products) {
+  const grid = document.getElementById('product-grid');
+  if (!products.length) { grid.innerHTML='<div class="no-result">검색 결과가 없습니다.</div>'; return; }
+  grid.innerHTML = products.map(p => {
+    const idx = allProducts.indexOf(p);
+    const src = findImg(p.name);
+    const imgHtml = src ? `<img src="${src}"/>` : `<span class="prod-img-ph">🍶</span>`;
+    return `<div class="prod-card ${selected.has(idx)?'sel':''}" onclick="toggleSelect(${idx})" data-idx="${idx}">
+      <div class="prod-img-wrap">${imgHtml}</div>
+      <div class="prod-name">${p.name}</div>
+      <div class="prod-grade">${p.grade}</div>
+      <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+        ${p.vol?`<span style="font-size:.62rem;color:var(--ink3)">${p.vol}ml</span>`:''}
+        ${p.price?`<span class="prod-price">${fmtPrice(p.price)}</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSelect(idx) {
+  if (selected.has(idx)) {
+    selected.delete(idx);
+    selectedOrder = selectedOrder.filter(i => i !== idx);
+  } else {
+    selected.add(idx);
+  }
+  document.querySelector(`[data-idx="${idx}"]`)?.classList.toggle('sel', selected.has(idx));
+  document.getElementById('sel-badge').textContent = selected.size;
+  renderSelTags();
+}
+
+// 선택 순서 배열 (드래그로 재정렬 가능)
+let selectedOrder = [];
+
+function renderSelTags() {
+  const panel = document.getElementById('sel-panel');
+  const container = document.getElementById('sel-tags');
+  if (!selected.size) { panel.style.display = 'none'; selectedOrder = []; return; }
+  // selectedOrder 동기화
+  selectedOrder = selectedOrder.filter(i => selected.has(i));
+  selected.forEach(i => { if (!selectedOrder.includes(i)) selectedOrder.push(i); });
+  panel.style.display = 'block';
+  container.innerHTML = selectedOrder.map((idx, pos) => {
+    const p = allProducts[idx];
+    return `<div class="sel-tag" draggable="true"
+      ondragstart="dragStart(event,${pos})"
+      ondragover="dragOver(event)"
+      ondrop="dragDrop(event,${pos})"
+      ondragend="dragEnd(event)">
+      <span class="sel-tag-drag">⠿</span>
+      <span class="sel-tag-num">${pos+1}</span>
+      <span class="sel-tag-name">${p.name}</span>
+      ${p.vol ? `<span class="sel-tag-vol">${p.vol}ml</span>` : ''}
+      <button class="sel-tag-remove" onclick="removeSelected(${idx})" title="제거">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function removeSelected(idx) {
+  selected.delete(idx);
+  selectedOrder = selectedOrder.filter(i => i !== idx);
+  document.querySelector(`[data-idx="${idx}"]`)?.classList.remove('sel');
+  document.getElementById('sel-badge').textContent = selected.size;
+  renderSelTags();
+}
+
+let dragSrcPos = null;
+function dragStart(e, pos) {
+  dragSrcPos = pos;
+  e.target.style.opacity = '.4';
+  e.dataTransfer.effectAllowed = 'move';
+}
+function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
+function dragDrop(e, pos) {
+  e.preventDefault();
+  if (dragSrcPos === null || dragSrcPos === pos) return;
+  const moved = selectedOrder.splice(dragSrcPos, 1)[0];
+  selectedOrder.splice(pos, 0, moved);
+  renderSelTags();
+}
+function dragEnd(e) { dragSrcPos = null; e.target.style.opacity = '1'; renderSelTags(); }
+
+function filterProducts() {
+  const q = document.getElementById('search').value.replace(/\s/g,'').toLowerCase();
+  const g = document.getElementById('grade-filter').value;
+  const s = document.getElementById('style-filter').value;
+  const filtered = allProducts.filter(p => {
+    const ok = !q || p.name.replace(/\s/g,'').toLowerCase().includes(q) || p.nameJp.replace(/\s/g,'').toLowerCase().includes(q);
+    return ok && (!g||p.grade===g) && (!s||p.style===s);
+  });
+  renderGrid(filtered);
+}
+
+/* ── 제안서 생성 ── */
+function generateProposal() {
+  if (!selected.size) { alert('상품을 1개 이상 선택해주세요.'); return; }
+  const biz = document.getElementById('bizname').value.trim() || '거래처';
+  const month = document.getElementById('genmonth').value;
+  const monthStr = month ? new Date(month+'-01').toLocaleDateString('ko-KR',{year:'numeric',month:'long'}) : '';
+
+  const salesName = document.getElementById('sales-name').value.trim();
+  const salesTel  = document.getElementById('sales-tel').value.trim();
+  document.getElementById('p-title').textContent     = biz;
+  document.getElementById('p-nav-title').textContent = biz + ' 제안서';
+  document.getElementById('p-meta-date').textContent = monthStr ? monthStr + ' 기준' : '';
+  document.getElementById('p-meta-name').textContent = salesName || '';
+  document.getElementById('p-meta-tel').textContent  = salesTel  || '';
+
+
+  const items = selectedOrder.map(i => allProducts[i]);
+  document.getElementById('p-items').innerHTML = items.map((p,n) => {
+    const src = findImg(p.name);
+    const imgHtml = src ? `<img src="${src}"/>` : `<div class="p-img-ph">🍶</div>`;
+    const specs = [
+      {label:'용량',    value: p.vol   ? p.vol+'ml'  : ''},
+      {label:'업소가',  value: fmtPrice(p.price),       cls:'price'},
+      {label:'ALC',    value: p.alc   ? p.alc+'%'   : ''},
+      {label:'주질',    value: p.style},
+      {label:'정미보합', value: p.rice  ? p.rice+'%'  : ''},
+      {label:'원료',    value: p.ingr},
+      {label:'생산지',  value: p.region},
+    ].filter(s=>s.value);
+    const specsNoPrice = specs.filter(s=>s.cls!=='price');
+    return `<div class="prop-item">
+      <div class="p-img-col">
+        <div class="p-img-wrap"><div class="p-num">${n+1}</div>${imgHtml}</div>
+        ${p.price?`<div class="p-img-price">${fmtPrice(p.price)}</div>`:''}
+      </div>
+      <div>
+        <div class="p-name-row"><span class="p-name">${p.name}</span><span class="p-name-jp">${p.nameJp}</span><span class="p-grade">${p.grade}</span></div>
+        <div class="p-specs">${specsNoPrice.map(s=>`<div class="spec-box"><span class="spec-label">${s.label}</span><span class="spec-val ${s.cls||''}">${s.value}</span></div>`).join('')}</div>
+        <div class="p-desc-wrap"><span class="p-desc-bar"></span><span class="p-desc">${p.desc}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('editor').style.display   = 'none';
+  document.getElementById('proposal').style.display = 'block';
+  window.scrollTo(0,0);
+}
+
+
+function exportHTML() {
+  const bizName  = document.getElementById('p-title').textContent;
+  const title    = bizName + ' 상품 제안서';
+  const metaDate = document.getElementById('p-meta-date').textContent;
+  const metaName = document.getElementById('p-meta-name').textContent;
+  const metaTel  = document.getElementById('p-meta-tel').textContent;
+  const items    = document.getElementById('p-items').innerHTML;
+
+  const coverHtml = `<div class="prop-cover">
+    <div class="cover-left">
+      <div class="cover-main-row">
+        <span class="cover-company">ILOSAKE</span>
+        <span class="cover-kanji">提案書</span>
+        <span class="cover-vsep"></span>
+        <span class="cover-biz-name">${bizName}</span>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div class="cover-date-row">${metaDate}</div>
+      <div class="cover-sales-row"><span>${metaName}</span><span class="cover-hsep">ㅣ</span><span>${metaTel}</span></div>
+    </div>
+  </div>`;
+
+  const css = `
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Shippori+Mincho:wght@400;600&display=swap');
+    :root{--ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;--paper:#f7f3ec;--paper2:#ede8de;--paper3:#ddd8cc;--gold:#c8963c;--gold2:#a87830;--border:rgba(26,18,8,0.1)}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--ink)}
+    .prop-inner{max-width:860px;margin:0 auto;padding:1rem 1.5rem 3rem}
+    .prop-cover{background:#1a1208;border-radius:8px;padding:.8rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:2rem;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .cover-left{display:flex;align-items:center}
+    .cover-main-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+    .cover-company{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:rgba(247,243,236,.55);letter-spacing:.2em;line-height:1;text-transform:uppercase}
+    .cover-kanji{font-family:'Shippori Mincho',serif;font-size:.9rem;color:rgba(247,243,236,.35);letter-spacing:.08em}
+    .cover-vsep{width:1px;height:1.1rem;background:rgba(247,243,236,.25);flex-shrink:0;display:inline-block}
+    .cover-biz-name{font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;color:#fff;letter-spacing:.02em;line-height:1.2}
+    .cover-right{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
+    .cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
+    .cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
+    .cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
+    .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem}
+    .prop-item{display:grid;grid-template-columns:80px 1fr;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border);break-inside:avoid}
+    .prop-item:last-child{border-bottom:none}
+    .p-img-col{display:flex;flex-direction:column;gap:.3rem}
+    .p-img-wrap{position:relative}
+    .p-img-wrap img{width:100%;aspect-ratio:2/3;object-fit:contain;border-radius:5px;background:var(--paper2);display:block}
+    .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
+    .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:#1a1208;color:#f7f3ec;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
+    .p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2)}
+    .p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.25rem}
+    .p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
+    .p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
+    .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
+    .p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.4rem}
+    .spec-box{background:var(--paper2);border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
+    .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+    .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
+    .spec-val.price{color:var(--gold2)}
+    .p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+    
+  `;
+
+  const doc = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>${title}</title>
+<style>${css}</style>
+</head>
+<body>
+<div class="prop-inner">
+  ${coverHtml}
+  <div class="p-items-grid">${items}</div>
+</div>
+</body>
+</html>`;
+
+  const blob = new Blob([doc], {type: 'text/html;charset=utf-8'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = (bizName || '제안서').replace(/\s+/g,'_') + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function refreshSheet() {
+  document.getElementById('editor').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+  try {
+    await loadFromSheet();
+  } catch(e) {
+    alert('데이터 로드 실패. 인터넷 연결을 확인해주세요.');
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
+}
+
+function backToEditor() {
+  document.getElementById('proposal').style.display = 'none';
+  document.getElementById('editor').style.display   = 'flex';
+}
+
+function resetAll() {
+  selected.clear();
+  document.getElementById('bizname').value          = '';
+  document.getElementById('genmonth').value         = new Date().toISOString().slice(0,7);
+  document.getElementById('search').value           = '';
+  document.getElementById('grade-filter').value     = '';
+  document.getElementById('style-filter').value     = '';
+  selectedOrder = [];
+  document.getElementById('sel-badge').textContent  = '0';
+  renderSelTags();
+  renderGrid(allProducts);
+}
+
+/* drag & drop */
+const xlsxEl = document.getElementById('xlsx-zone');
+if (xlsxEl) {
+  xlsxEl.addEventListener('dragover', e => { e.preventDefault(); xlsxEl.classList.add('drag'); });
+  xlsxEl.addEventListener('dragleave', () => xlsxEl.classList.remove('drag'));
+  xlsxEl.addEventListener('drop', e => { e.preventDefault(); xlsxEl.classList.remove('drag'); handleXlsx(e.dataTransfer.files[0]); });
+}
+
+init();
+</script>
+</body>
+</html>
