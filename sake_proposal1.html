@@ -479,7 +479,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
     </div>
     <div style="margin-top:1.2rem">
       <div class="sec-label">🍶 ​MEMO</div>
-      <textarea class="memo-textarea" id="memo-text" placeholder="예) 초도 선입금 확인 후 출고, 5% 할인&#10;배송: 주문 후 2~3일 이내&#10;결제 조건: 선결제 / 30일 이내 후결제 가능"></textarea>
+      <textarea class="memo-textarea" id="memo-text" placeholder="예) 초도 선입금 확인 후 출고, 5% 할인"></textarea>
     </div>
   </div>
   <div class="ed-footer">
@@ -519,7 +519,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
     </div>
     <div class="p-items-grid" id="p-items"></div>
     <div class="prop-memo" id="p-memo" style="display:none">
-      <div class="prop-memo-title">메모 / 발주 조건</div>
+      <div class="prop-memo-title">🍶 ​MEMO</div>
       <div class="prop-memo-body" id="p-memo-body"></div>
     </div>
   </div>
@@ -1035,7 +1035,7 @@ function exportHTML() {
 <div class="prop-inner">
   ${coverHtml}
   <div class="p-items-grid">${items}</div>
-  ${memoText ? `<div class="prop-memo"><div class="prop-memo-title">메모 / 발주 조건</div><div class="prop-memo-body">${memoText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>` : ''}
+  ${memoText ? `<div class="prop-memo"><div class="prop-memo-title">🍶 ​MEMO</div><div class="prop-memo-body">${memoText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>` : ''}
 </div>
 </body>
 </html>`;
