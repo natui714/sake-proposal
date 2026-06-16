@@ -118,8 +118,10 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 
 .prod-card{border:1px solid var(--border2);border-radius:8px;background:var(--paper);padding:9px;cursor:pointer;transition:border-color .2s,background .15s,transform .15s;display:flex;flex-direction:column;gap:5px;position:relative}
 .prod-card:hover{border-color:var(--gold);transform:translateY(-1px);background:#fdf8f0}
-.prod-card.sel{border-color:var(--gold);background:#fdf6e8}
-.prod-card.sel::after{content:'✓';position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gold2);font-weight:700}
+.prod-card.sel{border-color:var(--gold);background:#dbeafe}
+.prod-card.sel-partial{border-color:var(--gold);background:#eff6ff;border-style:dashed}
+.prod-card.sel::after{content:'✓';position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gold);font-weight:700}
+.prod-card.sel-partial::after{content:'◑';position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gold);font-weight:700}
 .prod-img-wrap{width:100%;aspect-ratio:1/1.3;background:var(--paper2);border-radius:5px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .prod-img-wrap img{width:100%;height:100%;object-fit:contain}
 .prod-img-ph{font-size:2rem;color:var(--paper3)}
@@ -184,7 +186,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
 .cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
 .cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
-.p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
+.p-items-grid{display:grid;grid-template-columns:1fr;gap:0}
 .prop-item{display:grid;grid-template-columns:110px 1fr;gap:1rem;padding:.75rem 0;border-bottom:none;page-break-inside:avoid}
 .prop-item:last-child{border-bottom:none}
 .p-img-col{display:flex;flex-direction:column;gap:0;background:transparent!important}
@@ -256,6 +258,52 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .p-img-wrap img{width:100%;height:150px;object-fit:contain;background:transparent}
 .p-img-ph{width:100%;height:150px;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
 .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:var(--ink);color:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;z-index:2}
+
+
+/* ── VARIANT TABLE ── */
+.variant-table{width:100%;border-collapse:collapse;margin:.35rem 0;font-size:.72rem}
+.variant-table thead th{
+  font-size:.55rem;font-weight:500;color:var(--ink3);
+  letter-spacing:.04em;text-transform:uppercase;
+  padding:2px 6px;border-bottom:1px solid var(--border2);
+  text-align:left;white-space:nowrap;
+}
+.variant-table tbody tr{border-bottom:.5px solid var(--border)}
+.variant-table tbody tr:last-child{border-bottom:none}
+.vt-vol{padding:4px 6px;font-weight:600;color:var(--ink);white-space:nowrap}
+.vt-boni{padding:4px 6px;color:var(--ink3);font-size:.65rem;white-space:nowrap}
+.vt-w{padding:4px 6px;font-weight:700;color:var(--gold);white-space:nowrap}
+.vt-r{padding:4px 6px;font-weight:300;color:var(--ink3);font-size:.65rem;white-space:nowrap}
+.vt-bc{padding:4px 6px;color:var(--ink3);font-size:.6rem;letter-spacing:.05em;font-family:monospace}
+
+/* ── PROP ITEM (새 레이아웃) ── */
+.prop-item{display:grid;grid-template-columns:100px 1fr;gap:1rem;padding:.8rem 0;border-bottom:.5px solid var(--border2);break-inside:avoid;page-break-inside:avoid}
+.prop-item:last-child{border-bottom:none}
+.p-img-col{display:flex;flex-direction:column;align-items:center}
+.p-img-wrap{position:relative;width:100px;height:160px;overflow:visible;background:transparent}
+.p-img-wrap img{width:100%;height:160px;object-fit:contain;background:transparent}
+.p-img-ph{width:100%;height:160px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
+.p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:var(--ink);color:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700;z-index:2}
+
+.p-info-col{display:flex;flex-direction:column;gap:.3rem}
+.p-name-block{display:flex;flex-direction:column;gap:.1rem}
+.p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3}
+.p-name-jp-bottom{font-family:'Shippori Mincho',serif;font-size:.63rem;color:var(--ink3);letter-spacing:.04em}
+.p-meta-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin:.1rem 0}
+.supplier-badge{font-size:.63rem;font-weight:700;padding:2px 9px;border-radius:99px;letter-spacing:.02em}
+.supplier-sake{background:#dbeafe;color:#1a4f8a;border:1px solid #93c5fd}
+.supplier-plus{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
+.p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-top:.2rem}
+.spec-box{background:var(--paper3);border-radius:4px;padding:2px 7px;display:flex;gap:3px;align-items:baseline}
+.spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.spec-val{font-size:.67rem;font-weight:500;color:var(--ink)}
+.p-desc-wrap{display:flex;gap:.4rem;margin-top:.2rem;align-items:flex-start}
+.p-desc-bar{width:2px;background:var(--gold);flex-shrink:0;align-self:stretch;border-radius:1px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.p-desc{font-size:.62rem;color:var(--ink2);line-height:1.65;font-weight:300;display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
+
+/* ── PROD CARD (선택 그리드) ── */
+.prod-vol{font-size:.61rem;color:var(--ink3);line-height:1.3}
+.sel-partial::after{content:'−';position:absolute;top:5px;right:7px;font-size:.65rem;color:var(--gold);font-weight:700}
 
 /* ── MOBILE ── */
 @media(max-width:640px){
@@ -371,8 +419,8 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 
   .p-items-grid{
     display:grid!important;
-    grid-template-columns:1fr 1fr!important;
-    gap:0 6mm!important;
+    grid-template-columns:1fr!important;
+    gap:0!important;
   }
 
   .prop-item{
@@ -513,6 +561,30 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
   .prop-memo-title{font-size:6pt!important;margin-bottom:1.5mm!important}
   .prop-memo-body{font-size:7pt!important;line-height:1.55!important}
   .price-notice{font-size:6.5pt!important;color:#4a6fa5!important;text-align:right!important;margin-bottom:1.5mm!important;margin-top:.5mm!important}
+  /* variant table print */
+  .variant-table{width:100%!important;border-collapse:collapse!important;margin:.5mm 0!important;font-size:6pt!important}
+  .variant-table thead th{font-size:5pt!important;color:#4a6fa5!important;padding:0.5mm 1.5mm!important;border-bottom:0.4pt solid rgba(15,31,61,.2)!important;text-align:left!important;white-space:nowrap!important}
+  .variant-table tbody tr{border-bottom:0.3pt solid rgba(15,31,61,.1)!important}
+  .vt-vol{padding:0.5mm 1.5mm!important;font-weight:700!important;color:#0f1f3d!important;white-space:nowrap!important}
+  .vt-boni{padding:0.5mm 1.5mm!important;color:#4a6fa5!important;font-size:5.5pt!important}
+  .vt-w{padding:0.5mm 1.5mm!important;font-weight:700!important;color:#2563a8!important;-webkit-print-color-adjust:exact!important}
+  .vt-r{padding:0.5mm 1.5mm!important;font-weight:300!important;color:#4a6fa5!important;font-size:5.5pt!important}
+  .vt-bc{padding:0.5mm 1.5mm!important;color:#4a6fa5!important;font-size:5pt!important;font-family:monospace!important}
+  .p-name-block{display:flex!important;flex-direction:column!important;gap:.3mm!important}
+  .p-name{font-size:9pt!important;font-weight:700!important}
+  .p-name-jp-bottom{font-size:6pt!important;color:#4a6fa5!important}
+  .supplier-sake{background:#dbeafe!important;color:#1a4f8a!important;border:0.4pt solid #93c5fd!important;-webkit-print-color-adjust:exact!important}
+  .supplier-plus{background:#fee2e2!important;color:#991b1b!important;border:0.4pt solid #fca5a5!important;-webkit-print-color-adjust:exact!important}
+  .supplier-badge{font-size:5.5pt!important;padding:.3mm 2mm!important;border-radius:99pt!important;font-weight:700!important;-webkit-print-color-adjust:exact!important}
+  .p-desc-bar{background:#2563a8!important;-webkit-print-color-adjust:exact!important}
+  .p-desc{font-size:6.5pt!important;-webkit-line-clamp:4!important}
+  .spec-box{background:#c8d8ee!important;-webkit-print-color-adjust:exact!important}
+  .spec-label{font-size:5pt!important}
+  .spec-val{font-size:6pt!important}
+  .p-img-wrap{width:28mm!important;height:38mm!important}
+  .p-img-wrap img{width:28mm!important;height:38mm!important;object-fit:contain!important;background:transparent!important}
+  .prop-item{grid-template-columns:28mm 1fr!important;gap:3mm!important;padding:2.5mm 0!important;min-height:42mm!important;border-bottom:.3pt solid rgba(15,31,61,.15)!important}
+
 }
 
 
@@ -596,14 +668,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
       </div>
       <select class="filter-select" id="grade-filter" onchange="filterProducts()"><option value="">등급 전체</option></select>
       <select class="filter-select" id="style-filter" onchange="filterProducts()"><option value="">주질 전체</option></select>
-      <select class="filter-select" id="price-filter" onchange="filterProducts()">
-        <option value="">도매가 전체</option>
-        <option value="0-20000">~2만원</option>
-        <option value="20000-40000">2~4만원</option>
-        <option value="40000-70000">4~7만원</option>
-        <option value="70000-100000">7~10만원</option>
-        <option value="100000-999999">10만원↑</option>
-      </select>
+      
     </div>
     <div class="product-grid" id="product-grid"></div>
     <div class="sel-info">선택된 상품 <span class="sel-badge" id="sel-badge">0</span>개</div>
@@ -706,70 +771,70 @@ async function loadFromSheet() {
 }
 
 function parseCSV(text) {
-  // 헤더명 기반 파싱 (도매 시트 전용: 도매가/본입수/바코드 포함)
   const products = [];
   let pos = 0;
 
-  // 헤더 행 읽기
+  // 헤더 행 읽기 (헤더명 기반 매핑 우선, 위치 기반 폴백)
   const headerRow = readRow();
   if (!headerRow) return products;
   const hdr = headerRow.map(h => String(h||'').trim());
-  const colIdx = name => { const i = hdr.indexOf(name); return i >= 0 ? i : -1; };
+  const ci = name => { const i = hdr.indexOf(name); return i >= 0 ? i : -1; };
 
+  // 실제 도매 시트 컬럼 (B~Q, 0-indexed)
   const C = {
-    name:      colIdx('상품명'),
-    nameJp:    colIdx('일본어 상품명'),
-    vol:       colIdx('용량'),
-    boniipsu:  colIdx('본입수'),
-    supplier:  colIdx('납품 수입사'),
-    price:     colIdx('업소가'),
-    wholesale: colIdx('도매가'),
-    barcode:   colIdx('바코드'),
-    jujong:    colIdx('주종'),
-    alc:       colIdx('ALC'),
-    grade:     colIdx('등급/종류'),
-    style:     colIdx('주질'),
-    rice:      colIdx('정미보합'),
-    ingr:      colIdx('원료'),
-    region:    colIdx('생산지'),
-    desc:      colIdx('상품설명'),
+    name:      ci('상품명')      >= 0 ? ci('상품명')      : 1,
+    nameJp:    ci('일본어 상품명') >= 0 ? ci('일본어 상품명') : 2,
+    vol:       ci('용량')        >= 0 ? ci('용량')        : 3,
+    boniipsu:  ci('본입수')      >= 0 ? ci('본입수')      : 4,
+    supplier:  ci('납품 수입사') >= 0 ? ci('납품 수입사') : 5,
+    price:     ci('업소가')      >= 0 ? ci('업소가')      : 6,
+    wholesale: ci('도매가')      >= 0 ? ci('도매가')      : 7,
+    barcode:   ci('바코드')      >= 0 ? ci('바코드')      : 8,
+    jujong:    ci('주종')        >= 0 ? ci('주종')        : 9,
+    alc:       ci('ALC')         >= 0 ? ci('ALC')         : (ci('알콜') >= 0 ? ci('알콜') : 10),
+    grade:     ci('등급/종류')   >= 0 ? ci('등급/종류')   : (ci('등급') >= 0 ? ci('등급') : 11),
+    style:     ci('주질')        >= 0 ? ci('주질')        : 12,
+    rice:      ci('정미보합')    >= 0 ? ci('정미보합')    : 13,
+    ingr:      ci('원료')        >= 0 ? ci('원료')        : 14,
+    region:    ci('생산지')      >= 0 ? ci('생산지')      : 15,
+    desc:      ci('상품설명')    >= 0 ? ci('상품설명')    : 16,
   };
 
-  // 헤더가 없으면 위치 기반 폴백
-  const g = (row, key, fb) => {
-    const i = C[key];
-    return String((i >= 0 ? row[i] : row[fb]) || '');
-  };
+  const g = (row, key) => String(row[C[key]] || '');
 
   while (pos < text.length) {
     const row = readRow();
     if (!row) break;
-    const name = g(row,'name',1).trim();
+    const name = g(row,'name').trim();
     if (!name || name === '상품명') continue;
-    let rice = parseFloat(g(row,'rice',13));
+
+    let rice = parseFloat(g(row,'rice'));
     if (rice > 0 && rice < 1) rice = Math.round(rice * 100);
     else rice = Math.round(rice) || 0;
-    let price     = parseInt(g(row,'price',6).replace(/[^0-9]/g,'')) || 0;
-    let wholesale = parseInt(g(row,'wholesale',7).replace(/[^0-9]/g,'')) || 0;
-    let alc       = parseFloat(g(row,'alc',10)) || 0;
+
+    let price     = parseInt(g(row,'price').replace(/[^0-9]/g,'')) || 0;
+    let wholesale = parseInt(g(row,'wholesale').replace(/[^0-9]/g,'')) || 0;
+    let alc       = parseFloat(g(row,'alc')) || 0;
+    let vol       = g(row,'vol') ? String(Math.round(parseFloat(g(row,'vol'))||0)) : '';
+
     products.push({
-      id: products.length,
+      id:        products.length,
       name,
-      nameJp:    g(row,'nameJp',2).trim(),
-      vol:       g(row,'vol',3) ? String(Math.round(parseFloat(g(row,'vol',3))||0)) : '',
-      boniipsu:  g(row,'boniipsu',4).trim(),
-      supplier:  g(row,'supplier',5).trim(),
+      nameJp:    g(row,'nameJp').trim(),
+      vol,
+      boniipsu:  g(row,'boniipsu').trim(),
+      supplier:  g(row,'supplier').trim(),
       price:     price ? String(price) : '',
       wholesale: wholesale ? String(wholesale) : '',
-      barcode:   g(row,'barcode',8).trim(),
-      jujong:    g(row,'jujong',9).trim(),
+      barcode:   g(row,'barcode').trim(),
+      jujong:    g(row,'jujong').trim(),
       alc:       alc ? String(alc) : '',
-      grade:     g(row,'grade',11).trim(),
-      style:     g(row,'style',12).trim(),
+      grade:     g(row,'grade').trim(),
+      style:     g(row,'style').trim(),
       rice:      rice ? String(rice) : '',
-      ingr:      g(row,'ingr',14).trim(),
-      region:    g(row,'region',15).trim(),
-      desc:      g(row,'desc',16).replace(/\n/g,'<br>').trim(),
+      ingr:      g(row,'ingr').trim(),
+      region:    g(row,'region').trim(),
+      desc:      g(row,'desc').replace(/\n/g,'<br>').trim(),
     });
   }
   return products;
@@ -850,7 +915,7 @@ function handleXlsx(file) {
         if (typeof rice==='number' && rice>0 && rice<1) rice = Math.round(rice*100);
         else if (typeof rice==='number') rice = Math.round(rice);
 
-        let price = r[6];
+        let price = r[6]; // G열=업소가
         if (typeof price==='number') price = Math.round(price);
 
         let alc = r[10];
@@ -984,21 +1049,65 @@ function fmtPrice(raw) {
 function renderGrid(products) {
   const grid = document.getElementById('product-grid');
   if (!products.length) { grid.innerHTML='<div class="no-result">검색 결과가 없습니다.</div>'; return; }
-  grid.innerHTML = products.map(p => {
+
+  // 동일 이름 그룹핑 → 대표 상품(첫번째)으로 카드 하나만 표시
+  const seen = new Map(); // name → 첫번째 product
+  products.forEach(p => { if (!seen.has(p.name)) seen.set(p.name, p); });
+  const deduped = [...seen.values()];
+
+  grid.innerHTML = deduped.map(p => {
     const idx = allProducts.indexOf(p);
     const src = findImg(p.name);
-    const imgHtml = src ? `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="prod-img-ph" style="display:none">🍶</span>` : `<span class="prod-img-ph">🍶</span>`;
-    return `<div class="prod-card ${selected.has(idx)?'sel':''}" onclick="toggleSelect(${idx})" data-idx="${idx}">
-      <div class="prod-img-wrap">${imgHtml}</div>
-      <div class="prod-name">${p.name}</div>
-      <div class="prod-grade">${p.grade}</div>
-      <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
-        ${p.vol?`<span style="font-size:.62rem;color:var(--ink3)">${p.vol}ml</span>`:''}
-        ${p.wholesale?`<span class="prod-price" style="color:var(--gold)">${fmtPrice(p.wholesale)}</span>`:''}
-        ${p.price?`<span style="font-size:.6rem;color:var(--ink3)">${fmtPrice(p.price)}</span>`:''}
-      </div>
-    </div>`;
+    const imgHtml = src
+      ? `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="prod-img-ph" style="display:none">🍶</span>`
+      : `<span class="prod-img-ph">🍶</span>`;
+    // 같은 이름 상품 전체 선택 여부
+    const siblings = allProducts.filter(a => a.name === p.name);
+    const allSel = siblings.every(a => selected.has(allProducts.indexOf(a)));
+    const anySel = siblings.some(a => selected.has(allProducts.indexOf(a)));
+    // 용량 목록 (여러개면 표시)
+    const vols = siblings.map(a=>a.vol).filter(Boolean);
+    const volDisplay = vols.length > 1
+      ? vols.map(v=>v+'ml').join(' · ')
+      : (p.vol ? p.vol+'ml' : '');
+    // 도매가 (여러용량이면 최저가~)
+    const prices = siblings.map(a=>parseInt(a.wholesale)||0).filter(Boolean);
+    const priceDisplay = prices.length > 1
+      ? fmtPrice(Math.min(...prices)) + '~'
+      : (p.wholesale ? fmtPrice(p.wholesale) : '');
+    return \`<div class="prod-card \${allSel?'sel':anySel?'sel-partial':''}" onclick="toggleSelectGroup('\${p.name.replace(/'/g,"\\'")}', event)" data-name="\${p.name}">
+      <div class="prod-img-wrap">\${imgHtml}</div>
+      <div class="prod-name">\${p.name}</div>
+      \${volDisplay ? \`<div class="prod-vol">\${volDisplay}</div>\` : ''}
+      \${priceDisplay ? \`<div class="prod-price">\${priceDisplay}</div>\` : ''}
+    </div>\`;
   }).join('');
+}
+
+// 그룹 통째로 선택/해제
+function toggleSelectGroup(name, event) {
+  const siblings = allProducts.filter(a => a.name === name);
+  const allSel = siblings.every(a => selected.has(allProducts.indexOf(a)));
+  siblings.forEach(a => {
+    const idx = allProducts.indexOf(a);
+    if (allSel) {
+      selected.delete(idx);
+      selectedOrder = selectedOrder.filter(i => i !== idx);
+    } else {
+      if (!selected.has(idx)) { selected.add(idx); }
+    }
+  });
+  document.getElementById('sel-badge').textContent = selected.size;
+  renderSelTags();
+  renderGrid(allProducts.filter(p => {
+    const q = document.getElementById('search').value.replace(/\s/g,'').toLowerCase();
+    const g = document.getElementById('grade-filter').value;
+    const s = document.getElementById('style-filter').value;
+    const ok = !q || p.name.replace(/\s/g,'').toLowerCase().includes(q) || (p.nameJp||'').replace(/\s/g,'').toLowerCase().includes(q);
+    const gradeOk = !g || p.grade===g;
+    const styleOk = !s || p.style===s;
+    return ok && gradeOk && styleOk;
+  }));
 }
 
 function toggleSelect(idx) {
@@ -1020,30 +1129,80 @@ function renderSelTags() {
   const panel = document.getElementById('sel-panel');
   const container = document.getElementById('sel-tags');
   if (!selected.size) { panel.style.display = 'none'; selectedOrder = []; return; }
-  // selectedOrder 동기화
   selectedOrder = selectedOrder.filter(i => selected.has(i));
   selected.forEach(i => { if (!selectedOrder.includes(i)) selectedOrder.push(i); });
   panel.style.display = 'block';
-  container.innerHTML = selectedOrder.map((idx, pos) => {
-    const p = allProducts[idx];
-    const isFirst = pos === 0;
-    const isLast = pos === selectedOrder.length - 1;
+
+  // 그룹별로 묶어서 표시 (같은 이름 → 대표 태그 하나 + 용량 서브텍스트)
+  const groupOrder = [];
+  const groupSeen = new Set();
+  selectedOrder.forEach(idx => {
+    const name = allProducts[idx].name;
+    if (!groupSeen.has(name)) { groupSeen.add(name); groupOrder.push(name); }
+  });
+
+  container.innerHTML = groupOrder.map((name, gpos) => {
+    const siblings = selectedOrder.filter(i => allProducts[i].name === name);
+    const vols = siblings.map(i => allProducts[i].vol).filter(Boolean).map(v=>v+'ml').join(' · ');
+    const isFirst = gpos === 0;
+    const isLast  = gpos === groupOrder.length - 1;
+    const firstIdx = siblings[0];
     return `<div class="sel-tag" draggable="true"
-      ondragstart="dragStart(event,${pos})"
+      ondragstart="dragStart(event,${gpos})"
       ondragover="dragOver(event)"
-      ondrop="dragDrop(event,${pos})"
-      ondragend="dragEnd(event)">
+      ondrop="dragDrop(event,${gpos})"
+      ondragend="dragEnd(event)"
+      data-group="${name.replace(/"/g,'&quot;')}">
       <span class="sel-tag-drag">⠿</span>
-      <span class="sel-tag-num">${pos+1}</span>
-      <span class="sel-tag-name">${p.name}</span>
-      ${p.vol ? `<span class="sel-tag-vol">${p.vol}ml</span>` : ''}
+      <span class="sel-tag-num">${gpos+1}</span>
+      <span class="sel-tag-name">${name}</span>
+      ${vols ? `<span class="sel-tag-vol">${vols}</span>` : ''}
       <span class="sel-tag-arrows">
-        <button class="sel-tag-arrow" onclick="moveTag(${pos},-1)" ${isFirst?'disabled':''}>▲</button>
-        <button class="sel-tag-arrow" onclick="moveTag(${pos},1)" ${isLast?'disabled':''}>▼</button>
+        <button class="sel-tag-arrow" onclick="moveTagGroup(${gpos},-1)" ${isFirst?'disabled':''}>▲</button>
+        <button class="sel-tag-arrow" onclick="moveTagGroup(${gpos},1)"  ${isLast ?'disabled':''}>▼</button>
       </span>
-      <button class="sel-tag-remove" onclick="removeSelected(${idx})" title="제거">✕</button>
+      <button class="sel-tag-remove" onclick="removeGroup('${name.replace(/'/g,"\'")}')">✕</button>
     </div>`;
   }).join('');
+}
+
+function removeGroup(name) {
+  allProducts.forEach((p,i) => { if(p.name===name){ selected.delete(i); selectedOrder=selectedOrder.filter(x=>x!==i); }});
+  document.getElementById('sel-badge').textContent = selected.size;
+  renderSelTags();
+  renderGrid(allProducts);
+}
+
+// 그룹 단위 순서 이동
+function moveTagGroup(gpos, dir) {
+  // groupOrder 재계산
+  const groupOrder = [];
+  const groupSeen = new Set();
+  selectedOrder.forEach(idx => {
+    const name = allProducts[idx].name;
+    if (!groupSeen.has(name)) { groupSeen.add(name); groupOrder.push(name); }
+  });
+  const newGpos = gpos + dir;
+  if (newGpos < 0 || newGpos >= groupOrder.length) return;
+  // 두 그룹 swap
+  const nameA = groupOrder[gpos];
+  const nameB = groupOrder[newGpos];
+  const idxA = selectedOrder.filter(i => allProducts[i].name === nameA);
+  const idxB = selectedOrder.filter(i => allProducts[i].name === nameB);
+  // selectedOrder에서 A, B 제거 후 순서 맞춰 재삽입
+  let newOrder = selectedOrder.filter(i => allProducts[i].name !== nameA && allProducts[i].name !== nameB);
+  // A와 B가 있던 첫 위치 찾기
+  const posA = selectedOrder.findIndex(i => allProducts[i].name === nameA);
+  const posB = selectedOrder.findIndex(i => allProducts[i].name === nameB);
+  const insertPos = Math.min(posA, posB);
+  // 작은 위치에 B(newGpos쪽), A 순으로 삽입
+  if (dir > 0) {
+    newOrder.splice(insertPos, 0, ...idxA, ...idxB);
+  } else {
+    newOrder.splice(insertPos, 0, ...idxB, ...idxA);
+  }
+  selectedOrder = newOrder;
+  renderSelTags();
 }
 
 function removeSelected(idx) {
@@ -1083,18 +1242,11 @@ function filterProducts() {
   const q = document.getElementById('search').value.replace(/\s/g,'').toLowerCase();
   const g = document.getElementById('grade-filter').value;
   const s = document.getElementById('style-filter').value;
-  const pr = document.getElementById('price-filter').value;
   const filtered = allProducts.filter(p => {
-    const ok = !q || p.name.replace(/\s/g,'').toLowerCase().includes(q) || p.nameJp.replace(/\s/g,'').toLowerCase().includes(q);
+    const ok = !q || p.name.replace(/\s/g,'').toLowerCase().includes(q) || (p.nameJp||'').replace(/\s/g,'').toLowerCase().includes(q);
     const gradeOk = !g || p.grade===g;
     const styleOk = !s || p.style===s;
-    let priceOk = true;
-    if (pr) {
-      const [min, max] = pr.split('-').map(Number);
-      const wPrice = parseInt(p.wholesale || p.price) || 0;
-      priceOk = wPrice >= min && wPrice <= max;
-    }
-    return ok && gradeOk && styleOk && priceOk;
+    return ok && gradeOk && styleOk;
   });
   renderGrid(filtered);
 }
@@ -1105,58 +1257,98 @@ function generateProposal() {
   const biz = document.getElementById('bizname').value.trim() || '거래처';
   const month = document.getElementById('genmonth').value;
   const monthStr = month ? new Date(month+'-01').toLocaleDateString('ko-KR',{year:'numeric',month:'long'}) : '';
-
   const salesName = document.getElementById('sales-name').value.trim();
   const salesTel  = document.getElementById('sales-tel').value.trim();
   document.getElementById('p-title').textContent     = biz;
-  document.getElementById('p-nav-title').textContent = biz + ' 제안서';
+  document.getElementById('p-nav-title').textContent = biz + ' 도매 제안서';
   document.getElementById('p-meta-date').textContent = monthStr ? monthStr + ' 기준' : '';
   document.getElementById('p-meta-name').textContent = salesName || '';
   document.getElementById('p-meta-tel').textContent  = salesTel  || '';
 
-
+  // 선택된 상품 순서대로 꺼내기
   const items = selectedOrder.map(i => allProducts[i]);
-  document.getElementById('p-items').innerHTML = items.map((p,n) => {
+
+  // 동일 이름 묶기 (첫 등장 순서 유지)
+  const groups = [];
+  const groupMap = new Map();
+  items.forEach(p => {
+    if (!groupMap.has(p.name)) {
+      const group = { base: p, variants: [] };
+      groupMap.set(p.name, group);
+      groups.push(group);
+    }
+    groupMap.get(p.name).variants.push(p);
+  });
+
+  document.getElementById('p-items').innerHTML = groups.map((grp, n) => {
+    const p = grp.base;
+    const variants = grp.variants;
     const src = findImg(p.name);
     const imgHtml = src
-      ? `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';this.nextElementSibling.style.height='44mm'" style="background:transparent"/><div class="p-img-ph" style="display:none">🍶</div>`
+      ? `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" style="background:transparent"/><div class="p-img-ph" style="display:none">🍶</div>`
       : `<div class="p-img-ph">🍶</div>`;
-    // 납품 수입사 배지
+
+    // 납품수입사 배지
     const supplierBadge = (() => {
       const s = (p.supplier||'').trim();
       if (!s) return '';
-      const cls = (s.includes('플러스')) ? 'supplier-plus' : 'supplier-sake';
+      const cls = s.includes('플러스') ? 'supplier-plus' : 'supplier-sake';
       return `<span class="supplier-badge ${cls}">${s}</span>`;
     })();
-    const volStr = p.vol ? p.vol+'ml' : '';
-    const specs2 = [
+
+    // 스펙 (공통 정보 — 첫 variant 기준)
+    const specs = [
       {label:'주종',    value: p.jujong},
       {label:'ALC',    value: p.alc ? p.alc+'%' : ''},
       {label:'등급',    value: p.grade},
       {label:'정미보합', value: p.rice ? p.rice+'%' : ''},
       {label:'원료',    value: p.ingr},
       {label:'생산지',  value: p.region},
-    ].filter(s=>s.value);
+    ].filter(s => s.value);
+
+    // 용량별 가격 테이블 (여러 variant)
+    const isSingle = variants.length === 1;
+    const variantRows = variants.map(v => {
+      const volStr   = v.vol ? v.vol + 'ml' : '-';
+      const boni     = v.boniipsu ? `${v.boniipsu}입` : '';
+      const wPrice   = v.wholesale ? fmtPrice(v.wholesale) : '-';
+      const rPrice   = v.price ? fmtPrice(v.price) : '-';
+      const bc       = v.barcode || '';
+      return `<tr>
+        <td class="vt-vol">${volStr}</td>
+        <td class="vt-boni">${boni}</td>
+        <td class="vt-w">${wPrice}</td>
+        <td class="vt-r">${rPrice}</td>
+        ${bc ? `<td class="vt-bc">${bc}</td>` : '<td class="vt-bc"></td>'}
+      </tr>`;
+    }).join('');
+
     return `<div class="prop-item">
       <div class="p-img-col">
         <div class="p-img-wrap"><div class="p-num">${n+1}</div>${imgHtml}</div>
       </div>
       <div class="p-info-col">
-        <div class="p-name-row">
+        <div class="p-name-block">
           <span class="p-name">${p.name}</span>
+          ${p.nameJp ? `<span class="p-name-jp-bottom">${p.nameJp}</span>` : ''}
         </div>
         <div class="p-meta-row">
-          ${volStr ? `<span class="p-meta-chip">${volStr}</span>` : ''}
-          ${p.boniipsu ? `<span class="p-meta-chip">본입수 ${p.boniipsu}</span>` : ''}
           ${supplierBadge}
         </div>
-        <div class="p-price-row">
-          ${p.wholesale ? `<span class="p-price-w">${fmtPrice(p.wholesale)}</span>` : ''}
-          ${p.price     ? `<span class="p-price-r">업소 ${fmtPrice(p.price)}</span>` : ''}
-        </div>
-        ${p.barcode ? `<div class="p-barcode">바코드 <span>${p.barcode}</span></div>` : ''}
-        <div class="p-specs">${specs2.map(s=>`<div class="spec-box"><span class="spec-label">${s.label}</span><span class="spec-val">${s.value}</span></div>`).join('')}</div>
-        ${p.nameJp ? `<div class="p-name-jp-bottom">${p.nameJp}</div>` : ''}
+        <table class="variant-table">
+          <thead>
+            <tr>
+              <th class="vt-vol">용량</th>
+              <th class="vt-boni">본입수</th>
+              <th class="vt-w">도매가</th>
+              <th class="vt-r">업소가</th>
+              <th class="vt-bc">바코드</th>
+            </tr>
+          </thead>
+          <tbody>${variantRows}</tbody>
+        </table>
+        <div class="p-specs">${specs.map(s=>`<div class="spec-box"><span class="spec-label">${s.label}</span><span class="spec-val">${s.value}</span></div>`).join('')}</div>
+        ${p.desc ? `<div class="p-desc-wrap"><span class="p-desc-bar"></span><span class="p-desc">${p.desc}</span></div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -1314,7 +1506,7 @@ async function saveAsImage() {
         display:flex!important; align-items:center!important; justify-content:space-between!important;
       }
       #prop-inner-wrap { padding:0!important; }
-      .p-items-grid { display:grid!important; grid-template-columns:1fr 1fr!important; gap:0 16px!important; }
+      .p-items-grid { display:grid!important; grid-template-columns:1fr!important; gap:0!important; }
       .prop-item {
         display:grid!important; grid-template-columns:110px 1fr!important;
         gap:8px!important; padding:10px 0 8px 10px!important;
@@ -1387,7 +1579,7 @@ function resetAll() {
   document.getElementById('search').value           = '';
   document.getElementById('grade-filter').value     = '';
   document.getElementById('style-filter').value     = '';
-  document.getElementById('price-filter').value     = '';
+
   document.getElementById('memo-text').value        = '';
   selectedOrder = [];
   document.getElementById('sel-badge').textContent  = '0';
