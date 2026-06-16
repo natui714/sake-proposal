@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>사케 상품 제안서</title>
+<title>사케 도매 제안서</title>
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-1RN8KBM7GE"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -14,11 +15,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root{
   --ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;
   --paper:#f7f3ec;--paper2:transparent;--paper3:#ddd8cc;
-  --gold:#c8963c;--gold2:#a87830;
+  --gold:#2563a8;--gold2:#1a4f8a;
   --border:rgba(26,18,8,0.1);--border2:rgba(26,18,8,0.22);
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -30,59 +32,64 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
 .loading-txt{font-size:.82rem;color:var(--ink3)}
 
-/* ── CHANNEL SELECT ── */
-#channel-select{
-  display:none;min-height:100vh;
-  align-items:center;justify-content:center;
-  background:var(--paper);padding:2rem;
+/* SETUP */
+#setup{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;padding:2rem}
+.setup-card{background:#fff;border:1px solid var(--border2);border-radius:16px;padding:2.5rem;max-width:520px;width:100%}
+.setup-logo{font-family:'Shippori Mincho',serif;font-size:3rem;color:var(--border2);text-align:center;letter-spacing:.3em;margin-bottom:.5rem}
+.setup-title{font-family:'Noto Serif KR',serif;font-size:1.3rem;font-weight:600;text-align:center;color:var(--ink);margin-bottom:.3rem}
+.setup-sub{font-size:.78rem;color:var(--ink3);text-align:center;margin-bottom:2rem;font-weight:300}
+
+.section-divider{font-size:.67rem;font-weight:500;color:var(--ink3);letter-spacing:.08em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:.9rem}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+.upload-zone{
+  border:1.5px dashed var(--border2);border-radius:10px;
+  padding:1.4rem;text-align:center;cursor:pointer;
+  transition:border-color .2s,background .2s;margin-bottom:1rem;
+  position:relative;
 }
-.ch-card{
-  background:#fff;border:1px solid var(--border2);border-radius:20px;
-  padding:2.8rem 2.2rem;max-width:480px;width:100%;
-  box-shadow:0 4px 24px rgba(26,18,8,.06);
+.upload-zone:hover,.upload-zone.drag{border-color:var(--gold);background:#fdf8f0}
+.upload-zone.done{border-color:var(--gold);border-style:solid;background:#fdf6e8}
+.upload-zone input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.upload-icon{font-size:1.8rem;margin-bottom:.35rem}
+.upload-label{font-size:.84rem;font-weight:500;color:var(--ink);margin-bottom:.2rem}
+.upload-hint{font-size:.71rem;color:var(--ink3);line-height:1.5}
+.upload-status{font-size:.78rem;color:var(--gold2);font-weight:500;margin-top:.4rem;min-height:1.2em}
+
+.img-saved-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:#fdf6e8;border:1px solid var(--gold);border-radius:8px;
+  padding:.7rem 1rem;margin-bottom:1rem;font-size:.78rem;
 }
-.ch-logo{font-family:'Shippori Mincho',serif;font-size:2.8rem;color:var(--border2);text-align:center;letter-spacing:.3em;margin-bottom:.3rem}
-.ch-title{font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;text-align:center;color:var(--ink);margin-bottom:.25rem}
-.ch-sub{font-size:.76rem;color:var(--ink3);text-align:center;margin-bottom:2rem;font-weight:300;line-height:1.6}
-.ch-divider{font-size:.65rem;font-weight:500;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:1rem}
-.ch-divider::before,.ch-divider::after{content:'';flex:1;height:1px;background:var(--border2)}
-.ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.5rem}
-.ch-btn{
-  border:1.5px solid var(--border2);border-radius:12px;
-  background:var(--paper);padding:1.1rem .8rem;
-  cursor:pointer;transition:border-color .2s,background .15s,transform .15s,box-shadow .15s;
-  display:flex;flex-direction:column;align-items:center;gap:.45rem;
-  font-family:'Noto Sans KR',sans-serif;
+.img-saved-row span{color:var(--gold2);font-weight:500}
+.img-saved-row button{
+  font-size:.7rem;color:var(--ink3);background:transparent;
+  border:1px solid var(--border2);border-radius:4px;
+  padding:3px 8px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;
 }
-.ch-btn:hover{border-color:var(--gold);background:#fdf8f0;transform:translateY(-2px);box-shadow:0 4px 12px rgba(200,150,60,.15)}
-.ch-btn.active{border-color:var(--gold);background:#fdf6e8;box-shadow:0 2px 8px rgba(200,150,60,.2)}
-.ch-btn-icon{font-size:1.6rem}
-.ch-btn-name{font-size:.88rem;font-weight:600;color:var(--ink)}
-.ch-btn-desc{font-size:.68rem;color:var(--ink3);line-height:1.4;text-align:center}
-.ch-btn-badge{font-size:.58rem;background:var(--gold);color:#fff;padding:2px 7px;border-radius:99px;font-weight:600;margin-top:.1rem}
-.ch-confirm{
+.img-saved-row button:hover{border-color:var(--ink3)}
+
+.progress-wrap{margin-top:.5rem;display:none}
+.progress-bar{height:3px;background:var(--paper3);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .08s}
+
+.btn-start{
   width:100%;padding:12px;border-radius:8px;border:none;
   background:var(--ink);color:var(--paper);
   font-family:'Noto Sans KR',sans-serif;font-size:.95rem;font-weight:500;
-  cursor:pointer;transition:background .2s;margin-top:.8rem;
+  cursor:pointer;transition:background .2s;margin-top:.5rem;
 }
-.ch-confirm:hover{background:var(--ink2)}
-.ch-confirm:disabled{background:var(--paper3);color:var(--ink3);cursor:not-allowed}
-.ch-selected-label{font-size:.75rem;color:var(--gold2);text-align:center;font-weight:500;min-height:1.1em;margin-top:.3rem}
+.btn-start:hover{background:var(--ink2)}
+.btn-start:disabled{background:var(--paper3);color:var(--ink3);cursor:not-allowed}
 
 /* EDITOR */
 #editor{min-height:100vh;display:none;flex-direction:column}
 .ed-header{background:var(--ink);color:var(--paper);padding:1.5rem 2.5rem;position:relative;overflow:hidden}
-.ed-header::before{content:'提案';position:absolute;right:1.5rem;top:-.5rem;font-family:'Shippori Mincho',serif;font-size:7rem;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;user-select:none}
+.ed-header::before{content:'卸売';position:absolute;right:1.5rem;top:-.5rem;font-family:'Shippori Mincho',serif;font-size:7rem;color:rgba(255,255,255,.04);line-height:1;pointer-events:none;user-select:none}
 .ed-header-row{display:flex;align-items:center;justify-content:space-between}
 .ed-header h1{font-family:'Noto Serif KR',serif;font-size:1.3rem;font-weight:600;letter-spacing:.05em}
 .ed-actions{display:flex;gap:8px;align-items:center}
 .ed-meta{font-size:.7rem;color:rgba(247,243,236,.35);margin-right:4px}
-.ch-badge-header{
-  font-size:.68rem;background:var(--gold);color:#fff;
-  padding:3px 10px;border-radius:99px;font-weight:600;
-  letter-spacing:.03em;flex-shrink:0;
-}
 .btn-sm{font-size:.72rem;color:rgba(247,243,236,.5);background:transparent;border:1px solid rgba(247,243,236,.2);border-radius:5px;padding:5px 10px;cursor:pointer;font-family:'Noto Sans KR',sans-serif;transition:color .2s,border-color .2s;white-space:nowrap}
 .btn-sm:hover{color:rgba(247,243,236,.9);border-color:rgba(247,243,236,.5)}
 
@@ -126,11 +133,15 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 
 .sel-tags{display:flex;flex-wrap:wrap;gap:6px}
 .sel-tag{display:flex;align-items:center;gap:4px;background:#fdf6e8;border:1px solid var(--gold);border-radius:99px;padding:3px 8px 3px 8px;font-size:.72rem;color:var(--ink2);cursor:grab;user-select:none;transition:opacity .15s,box-shadow .15s}
-.sel-tag:hover{box-shadow:0 1px 4px rgba(200,150,60,.3)}
+.sel-tag:hover{box-shadow:0 1px 4px rgba(37,99,168,.3)}
 .sel-tag-drag{font-size:.7rem;color:var(--ink3);cursor:grab}
 .sel-tag-num{font-size:.62rem;font-weight:700;color:var(--gold2);min-width:12px}
 .sel-tag-name{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sel-tag-vol{font-size:.63rem;color:var(--ink3)}
+.sel-tag-arrows{display:none;gap:1px}
+.sel-tag-arrow{width:18px;height:18px;border-radius:4px;background:var(--paper3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.65rem;color:var(--ink3);padding:0;line-height:1}
+.sel-tag-arrow:hover{background:var(--gold);color:#fff}
+.sel-tag-arrow:disabled{opacity:.25;cursor:default}
 .sel-tag-remove{width:14px;height:14px;border-radius:50%;background:var(--paper3);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:var(--ink3);line-height:1;padding:0;flex-shrink:0}
 .sel-tag-remove:hover{background:var(--gold);color:#fff}
 .ed-footer{background:var(--ink);padding:.9rem 2rem;display:flex;justify-content:flex-end;gap:10px;position:sticky;bottom:0}
@@ -145,8 +156,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .prop-nav>span{font-size:.77rem;color:rgba(247,243,236,.5)}
 .prop-nav-btns{display:flex;gap:8px}
 .prop-inner{max-width:860px;margin:0 auto;padding:1.2rem 2rem 3rem}
-
-/* 커버 */
 .prop-cover{
   background:var(--ink);border-radius:8px;
   padding:.8rem 1.5rem;margin-bottom:1rem;
@@ -155,17 +164,26 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 }
 .cover-left{display:flex;align-items:center}
 .cover-main-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-.cover-company{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#fff;letter-spacing:.22em;line-height:1;text-transform:uppercase;text-shadow:0 0 20px rgba(200,150,60,.4)}
-.cover-kanji{font-family:'Shippori Mincho',serif;font-size:.9rem;color:rgba(247,243,236,.35);letter-spacing:.08em}
-.cover-vsep{width:1px;height:1.1rem;background:rgba(247,243,236,.25);flex-shrink:0}
-.cover-biz-name{font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;color:#fff;letter-spacing:.02em;line-height:1.2}
+.cover-company{
+  font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;
+  color:#fff;letter-spacing:.22em;line-height:1;text-transform:uppercase;
+  text-shadow:0 0 20px rgba(37,99,168,.4);
+}
+.cover-kanji{
+  font-family:'Shippori Mincho',serif;font-size:.9rem;
+  color:rgba(247,243,236,.35);letter-spacing:.08em;
+}
+.cover-vsep{
+  width:1px;height:1.1rem;background:rgba(247,243,236,.25);flex-shrink:0;
+}
+.cover-biz-name{
+  font-family:'Noto Serif KR',serif;font-size:1.25rem;font-weight:600;
+  color:#fff;letter-spacing:.02em;line-height:1.2;
+}
 .cover-right{display:flex;flex-direction:column;align-items:flex-end;gap:.2rem;flex-shrink:0}
 .cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
 .cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
 .cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
-.cover-ch-badge{font-size:.6rem;background:rgba(200,150,60,.25);color:var(--gold);border:1px solid rgba(200,150,60,.4);padding:2px 8px;border-radius:99px;font-weight:600;margin-top:.2rem}
-
-/* 상품 그리드 */
 .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.5rem}
 .prop-item{display:grid;grid-template-columns:110px 1fr;gap:1rem;padding:.75rem 0;border-bottom:none;page-break-inside:avoid}
 .prop-item:last-child{border-bottom:none}
@@ -174,7 +192,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .p-img-wrap img{width:100%;height:200px;object-fit:contain;border-radius:5px;background:transparent;display:block}
 .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
 .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:var(--ink);color:var(--paper);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
-.p-img-price{text-align:center;font-size:.82rem;font-weight:700;color:var(--gold2);margin-top:.25rem}
+.p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2);margin-top:.25rem;line-height:1.5}
 .p-name-row{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;margin-bottom:.3rem}
 .p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3}
 .p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
@@ -185,133 +203,328 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
 .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
 .spec-val.price{color:var(--gold2)}
+.spec-val.wholesale{color:var(--gold);font-weight:700}
 .p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
 
-/* 제안서 하단 고정 문구 */
-.prop-footer-notice{
-  margin-top:1.5rem;
-  border-top:1px solid var(--border2);
-  padding-top:.9rem;
-  display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;
-}
-.notice-item{
-  display:flex;align-items:center;gap:.35rem;
-  font-size:.67rem;color:var(--ink3);line-height:1.4;
-}
-.notice-dot{
-  width:4px;height:4px;border-radius:50%;
-  background:var(--gold);flex-shrink:0;
-}
-.notice-item strong{color:var(--ink2);font-weight:600}
+.prop-memo{margin-top:1.2rem;border:1px solid var(--border2);border-radius:8px;padding:1rem 1.2rem;background:rgba(37,99,168,.04)}
+.price-notice{font-size:.7rem;color:var(--ink3);text-align:right;margin-bottom:.5rem;margin-top:.3rem;letter-spacing:.02em}
+.prop-memo-title{font-size:.62rem;font-weight:600;color:var(--ink3);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:.65rem}
+.prop-memo-title::after{content:'';flex:1;height:1px;background:var(--border2)}
+.prop-memo-body{font-size:.78rem;color:var(--ink2);line-height:1.75;white-space:pre-wrap;word-break:break-all;font-family:'Noto Sans KR',sans-serif}
+.memo-textarea{width:100%;min-height:80px;padding:10px 13px;border:1px solid var(--border2);border-radius:6px;background:var(--paper);font-family:'Noto Sans KR',sans-serif;font-size:.86rem;color:var(--ink);outline:none;transition:border-color .2s;resize:vertical;line-height:1.65}
+.memo-textarea:focus{border-color:var(--gold)}
+.memo-textarea::placeholder{color:var(--ink3)}
 
+/* ── MOBILE ── */
 @media(max-width:640px){
-  .info-panel{grid-template-columns:1fr 1fr}
-  .ch-grid{grid-template-columns:1fr}
-  .prop-item{grid-template-columns:130px 1fr;gap:1.2rem}
-  .p-specs{grid-template-columns:repeat(2,1fr)}
-  .ed-body{padding:1rem}
-}
+  /* 헤더 */
+  .ed-header{padding:1rem}
+  .ed-header h1{font-size:1rem}
+  .ed-header-row{flex-wrap:wrap;gap:.5rem}
+  .ed-actions{flex-wrap:wrap;gap:4px}
+  .ed-meta{display:none}
+  .btn-sm{font-size:.68rem;padding:4px 8px}
 
+  /* 에디터 바디 */
+  .ed-body{padding:.75rem}
+  .info-panel{grid-template-columns:1fr 1fr;gap:8px}
+  .fg label{font-size:.62rem}
+  .fg input{padding:8px 10px;font-size:.82rem}
+
+  /* 필터바 */
+  .filter-bar{gap:6px}
+  .search-wrap{min-width:0;flex:1 1 100%}
+  .filter-select{flex:1;font-size:.78rem;padding:7px 8px}
+
+  /* 상품 그리드 */
+  .product-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:7px;
+    max-height:52vw;
+  }
+  .prod-card{padding:7px 6px;gap:4px}
+  .prod-img-wrap{aspect-ratio:1/1.2}
+  .prod-name{font-size:.65rem;line-height:1.3}
+  .prod-grade{font-size:.58rem}
+  .prod-price{font-size:.63rem}
+
+  /* 선택 태그 */
+  .sel-tags{gap:4px}
+  .sel-tag{padding:4px 7px;font-size:.7rem;gap:3px}
+  .sel-tag-name{max-width:80px}
+  /* 모바일: ↑↓ 버튼 보이기 */
+  .sel-tag-arrows{display:flex!important}
+  /* 드래그 안내 숨기기 */
+  .drag-hint{display:none!important}
+  .touch-hint{display:block!important}
+
+  /* 하단 푸터 */
+  .ed-footer{padding:.75rem 1rem}
+  .btn{padding:7px 14px;font-size:.78rem}
+
+  /* 제안서 뷰 */
+  .prop-nav{padding:.7rem 1rem}
+  .prop-nav>span{display:none}
+  .prop-nav-btns{gap:5px;flex-wrap:wrap}
+  .prop-nav-btns .btn{padding:5px 10px;font-size:.7rem}
+  .prop-inner{padding:.75rem 1rem 2rem}
+  .prop-cover{
+    flex-direction:column;align-items:flex-start;gap:.4rem;
+    padding:.75rem 1rem;
+  }
+  .cover-company{font-size:1.1rem}
+  .cover-biz-name{font-size:1rem}
+  .cover-right{align-items:flex-start}
+  .p-items-grid{grid-template-columns:1fr;gap:0}
+  .prop-item{
+    grid-template-columns:90px 1fr;
+    gap:.7rem;
+    padding:.65rem 0;
+    border-bottom:.5px solid var(--border);
+  }
+  .p-img-wrap{height:130px}
+  .p-img-wrap img{height:130px}
+  .p-name{font-size:.88rem}
+  .p-desc{font-size:.61rem;-webkit-line-clamp:5}
+  .spec-label{font-size:.49rem}
+  .spec-val{font-size:.63rem}
+}
 @media print{
   @page{ size:A4 portrait; margin:6mm 10mm; }
-  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-  #editor,#setup,#loading,#channel-select{display:none!important}
-  #proposal{display:block!important}
-  .prop-nav{display:none!important}
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  #editor,#setup,#loading{ display:none!important }
+  #proposal{ display:block!important }
+  .prop-nav{ display:none!important }
 
-  body,.prop-inner,.prop-item,.p-img-col,.p-img-wrap,.p-img-wrap img,.p-img-wrap *{background:transparent!important;border-color:transparent!important;}
-  :root{--paper2:transparent!important;--paper:transparent!important;}
-  .spec-box{background:#f0ece4!important;-webkit-print-color-adjust:exact!important;}
+  /* 배경 전부 투명 */
+  body,
+  .prop-inner,
+  .prop-item,
+  .p-img-col,
+  .p-img-wrap,
+  .p-img-wrap img,
+  .p-img-wrap *{ background:transparent!important; border-color:transparent!important; }
+  /* 웹 CSS 배경색 완전 덮어쓰기 */
+  :root{ --paper2: transparent!important; --paper: transparent!important; }
+
+  /* spec-box만 베이지 */
+  .spec-box{
+    background:#f0ece4!important;
+    -webkit-print-color-adjust:exact!important;
+  }
 
   .prop-cover{
-    background:#1a1208!important;padding:.4rem 1rem!important;
-    margin-bottom:2mm!important;border-radius:4px!important;
-    display:flex!important;align-items:center!important;box-sizing:border-box!important;
+    background:#1a1208!important;
+    padding:.4rem 1rem!important;
+    margin-bottom:2mm!important;
+    border-radius:4px!important;
+    display:flex!important;
+    align-items:center!important;
+    box-sizing:border-box!important;
   }
-  .cover-ch-badge{background:rgba(200,150,60,.25)!important;color:#c8963c!important;border:1pt solid rgba(200,150,60,.5)!important;-webkit-print-color-adjust:exact!important;}
-  .prop-inner{max-width:100%!important;padding:0!important;}
+  .prop-inner{ max-width:100%!important; padding:0!important; }
 
-  .p-items-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:0 6mm!important;}
+  .p-items-grid{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:0 6mm!important;
+  }
+
   .prop-item{
-    display:grid!important;grid-template-columns:30mm 1fr!important;
-    gap:2.5mm!important;padding:2.5mm 0!important;
+    display:grid!important;
+    grid-template-columns:30mm 1fr!important;
+    gap:2.5mm!important;
+    padding:2.5mm 0!important;
     border-bottom:.3pt solid rgba(26,18,8,0.12)!important;
-    break-inside:avoid!important;box-sizing:border-box!important;
-    position:relative!important;align-items:start!important;
-    height:52mm!important;overflow:hidden!important;
+    break-inside:avoid!important;
+    box-sizing:border-box!important;
+    position:relative!important;
+    align-items:start!important;
+    height:52mm!important;
+    overflow:hidden!important;
   }
-  .prop-item:last-child{border-bottom:none!important;}
-  .p-num{position:absolute!important;top:1mm!important;left:0!important;width:4mm!important;height:4mm!important;font-size:5.5pt!important;background:#1a1208!important;color:#fff!important;border-radius:50%!important;display:flex!important;align-items:center!important;justify-content:center!important;}
-  .p-img-col{width:30mm!important;display:flex!important;flex-direction:column!important;box-sizing:border-box!important;gap:0!important;}
-  .p-img-wrap{width:30mm!important;height:40mm!important;overflow:hidden!important;border:none!important;outline:none!important;background:transparent!important;}
-  .p-img-wrap img{background:transparent!important;width:30mm!important;height:40mm!important;object-fit:contain!important;display:block!important;aspect-ratio:unset!important;border-radius:0!important;}
-  .p-img-wrap::before,.p-img-wrap::after{display:none!important;content:none!important;}
-  .p-img-price{font-size:8.5pt!important;font-weight:700!important;color:#a87830!important;text-align:center!important;margin-top:.5mm!important;display:block!important;border:none!important;-webkit-print-color-adjust:exact!important;}
-  .p-img-ph{width:30mm!important;height:40mm!important;display:flex!important;align-items:center!important;justify-content:center!important;background:transparent!important;border:.5pt solid rgba(26,18,8,0.2)!important;border-radius:3pt!important;font-size:7pt!important;color:#7a6248!important;}
-  .p-img-ph::after{content:"이미지 없음"!important;}
-  .prop-item>div:last-child{display:flex!important;flex-direction:column!important;padding-top:0!important;}
-  .p-name-row{display:flex!important;align-items:baseline!important;gap:1.5mm!important;flex-wrap:wrap!important;margin-top:0!important;margin-bottom:.5mm!important;}
-  .p-name{font-size:9pt!important;font-weight:700!important;line-height:1.2!important;}
-  .p-name-jp{font-size:6.5pt!important;color:#7a6248!important;}
-  .p-grade{font-size:6pt!important;padding:.2mm 1.5mm!important;border:.4pt solid #c8963c!important;color:#a87830!important;border-radius:2pt!important;-webkit-print-color-adjust:exact!important;}
-  .p-specs{display:flex!important;flex-wrap:wrap!important;gap:1mm!important;margin-bottom:.5mm!important;}
-  .spec-label{font-size:5.5pt!important;color:#7a6248!important;}
-  .spec-val{font-size:6.5pt!important;color:#1a1208!important;font-weight:500!important;}
-  .p-desc-wrap{display:flex!important;gap:1.5mm!important;align-self:flex-start!important;}
-  .p-desc-bar{width:1pt!important;background:#c8963c!important;flex-shrink:0!important;align-self:stretch!important;border-radius:1pt!important;-webkit-print-color-adjust:exact!important;}
-  .p-desc{font-size:7pt!important;line-height:1.5!important;color:#3d2f1a!important;display:block!important;-webkit-line-clamp:unset!important;overflow:visible!important;border-left:none!important;padding-left:0!important;box-shadow:none!important;}
+  .prop-item:last-child{ border-bottom:none!important; }
 
-  /* 하단 고정 문구 인쇄 */
-  .prop-footer-notice{
-    border-top:.4pt solid rgba(26,18,8,0.2)!important;
-    padding-top:2mm!important;margin-top:3mm!important;
-    display:flex!important;flex-wrap:wrap!important;gap:3mm!important;
+  .p-num{
+    position:absolute!important; top:1mm!important; left:0!important;
+    width:4mm!important; height:4mm!important; font-size:5.5pt!important;
+    background:#1a1208!important; color:#fff!important; border-radius:50%!important;
+    display:flex!important; align-items:center!important; justify-content:center!important;
   }
-  .notice-item{font-size:6.5pt!important;color:#7a6248!important;}
-  .notice-item strong{color:#3d2f1a!important;}
-  .notice-dot{width:2pt!important;height:2pt!important;background:#c8963c!important;-webkit-print-color-adjust:exact!important;}
+
+  /* 이미지 — aspect-ratio 제거하고 고정 크기로 */
+  .p-img-col{
+    width:30mm!important;
+    display:flex!important;
+    flex-direction:column!important;
+    box-sizing:border-box!important;
+    gap:0!important;
+  }
+  .p-img-wrap{
+    width:30mm!important;
+    height:40mm!important;
+    overflow:hidden!important;
+    border:none!important;
+    outline:none!important;
+    background:transparent!important;
+    --paper2:transparent!important;
+  }
+  .p-img-wrap img{
+    background:transparent!important;
+    width:30mm!important;
+    height:40mm!important;
+    object-fit:contain!important;
+  }
+  /* aspect-ratio 무력화 */
+  .p-img-wrap::before{ display:none!important; }
+  .p-img-wrap img{
+    width:100%!important;
+    height:100%!important;
+    object-fit:contain!important;
+    display:block!important;
+    aspect-ratio:unset!important;
+    border-radius:0!important;
+    background:transparent!important;
+  }
+  /* 웹CSS의 aspect-ratio로 생기는 빈 공간 제거 */
+  .p-img-wrap::after{ display:none!important; content:none!important; }
+  .p-img-price{
+    font-size:8.5pt!important;
+    font-weight:700!important;
+    color:#1a4f8a!important;
+    text-align:center!important;
+    margin-top:.5mm!important;
+    display:block!important;
+    border:none!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+  .p-img-ph{
+    width:30mm!important; height:40mm!important;
+    display:flex!important; align-items:center!important;
+    justify-content:center!important;
+    background:transparent!important;
+    border:.5pt solid rgba(26,18,8,0.2)!important;
+    border-radius:3pt!important;
+    font-size:7pt!important; color:#7a6248!important;
+  }
+  .p-img-ph::after{ content:"이미지 없음"!important; }
+
+  .prop-item > div:last-child{
+    display:flex!important;
+    flex-direction:column!important;
+    padding-top:0!important;
+  }
+  .p-name-row{
+    display:flex!important; align-items:baseline!important;
+    gap:1.5mm!important; flex-wrap:wrap!important;
+    margin-top:0!important; margin-bottom:.5mm!important;
+  }
+  .p-name{ font-size:9pt!important; font-weight:700!important; line-height:1.2!important; }
+  .p-name-jp{ font-size:6.5pt!important; color:#7a6248!important; }
+  .p-grade{
+    font-size:6pt!important; padding:.2mm 1.5mm!important;
+    border:.4pt solid #2563a8!important; color:#1a4f8a!important;
+    border-radius:2pt!important; -webkit-print-color-adjust:exact!important;
+  }
+  .p-specs{
+    display:flex!important; flex-wrap:wrap!important;
+    gap:1mm!important; margin-bottom:.5mm!important;
+  }
+  .spec-label{ font-size:5.5pt!important; color:#7a6248!important; }
+  .spec-val{ font-size:6.5pt!important; color:#1a1208!important; font-weight:500!important; }
+  .p-desc-wrap{
+    display:flex!important; gap:1.5mm!important; align-self:flex-start!important;
+  }
+  .p-desc-bar{
+    width:1pt!important; background:#2563a8!important;
+    flex-shrink:0!important; align-self:stretch!important;
+    border-radius:1pt!important;
+    -webkit-print-color-adjust:exact!important;
+  }
+  .p-desc{
+    font-size:7pt!important; line-height:1.5!important; color:#3d2f1a!important;
+    display:block!important; -webkit-line-clamp:unset!important;
+    overflow:visible!important; border-left:none!important;
+    padding-left:0!important; box-shadow:none!important;
+  }
+  .prop-memo{margin-top:3mm!important;border:.4pt solid rgba(26,18,8,0.2)!important;border-radius:3pt!important;padding:2mm 3mm!important;background:rgba(37,99,168,.04)!important;-webkit-print-color-adjust:exact!important;break-inside:avoid!important}
+  .prop-memo-title{font-size:6pt!important;margin-bottom:1.5mm!important}
+  .prop-memo-body{font-size:7pt!important;line-height:1.55!important}
+  .price-notice{font-size:6.5pt!important;color:#7a6248!important;text-align:right!important;margin-bottom:1.5mm!important;margin-top:.5mm!important}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 </style>
 </head>
 <body>
 
 <div id="loading">
-  <div class="loading-kanji">提案</div>
+  <div class="loading-kanji">卸売</div>
   <div class="loading-txt" id="loading-txt">데이터 불러오는 중...</div>
 </div>
 
-<!-- ── 도매 채널 선택 ── -->
-<div id="channel-select" style="display:none">
-  <div class="ch-card">
-    <div class="ch-logo">提案</div>
-    <div class="ch-title">사케 상품 제안서</div>
-    <div class="ch-sub">제안서를 작성할 도매 채널을 선택해주세요.<br>채널마다 단가 및 상품 구성이 다르게 적용됩니다.</div>
-    <div class="ch-divider">도매 채널 선택</div>
-    <div class="ch-grid" id="ch-grid">
-      <!-- JS로 렌더링 -->
+<!-- SETUP -->
+<!-- 엑셀 업로드 모달 -->
+<div id="xlsx-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:2rem;max-width:420px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+    <div style="font-family:'Shippori Mincho',serif;font-size:1.8rem;color:rgba(26,18,8,.15);text-align:center;margin-bottom:.3rem">卸売</div>
+    <div style="font-family:'Noto Serif KR',serif;font-size:1.1rem;font-weight:600;text-align:center;color:var(--ink);margin-bottom:.3rem">엑셀 업로드</div>
+    <div style="font-size:.75rem;color:var(--ink3);text-align:center;margin-bottom:1.5rem">단가 상품정보 엑셀을 업로드하세요</div>
+    <div class="upload-zone" id="xlsx-zone" style="margin-bottom:1rem">
+      <input type="file" accept=".xlsx,.xls" onchange="handleXlsx(this.files[0])"/>
+      <div class="upload-icon">📊</div>
+      <div class="upload-label">엑셀 파일 업로드</div>
+      <div class="upload-hint">.xlsx 파일을 클릭하거나 드래그하세요</div>
+      <div class="upload-status" id="xlsx-status"></div>
     </div>
-    <div class="ch-selected-label" id="ch-selected-label">채널을 선택해주세요</div>
-    <button class="ch-confirm" id="ch-confirm" onclick="confirmChannel()" disabled>다음 →</button>
+    <button class="btn-start" id="btn-start" onclick="closeXlsxModal()" disabled>확인 →</button>
+    <button onclick="closeXlsxModal()" style="width:100%;margin-top:.5rem;padding:8px;background:transparent;border:none;color:var(--ink3);font-size:.8rem;cursor:pointer;font-family:'Noto Sans KR',sans-serif">취소</button>
   </div>
 </div>
 
 <!-- EDITOR -->
+
 <div id="editor">
   <div class="ed-header">
     <div class="ed-header-row">
-      <div style="display:flex;align-items:center;gap:.75rem">
-        <h1>사케 상품 제안서</h1>
-        <span class="ch-badge-header" id="ch-badge-header"></span>
-      </div>
+      <h1>사케 도매 제안서</h1>
       <div class="ed-actions">
         <span class="ed-meta" id="ed-meta"></span>
-        <button class="btn-sm" onclick="goChannelSelect()">↩ 채널 변경</button>
+        <button class="btn-sm" onclick="goSetup()">↩ 엑셀 다시 업로드</button>
       </div>
     </div>
   </div>
   <div class="ed-body">
     <div class="info-panel">
-      <div class="fg"><label>업장명</label><input type="text" id="bizname" placeholder="예) 이자카야 하나"/></div>
+      <div class="fg"><label>거래처명</label><input type="text" id="bizname" placeholder="예) 정민주류 본점"/></div>
       <div class="fg"><label>생성월</label><input type="month" id="genmonth"/></div>
       <div class="fg"><label>담당 영업사원</label><input type="text" id="sales-name" placeholder="홍길동"/></div>
       <div class="fg"><label>연락처</label><input type="text" id="sales-tel" placeholder="010-0000-0000"/></div>
@@ -325,7 +538,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
       <select class="filter-select" id="grade-filter" onchange="filterProducts()"><option value="">등급 전체</option></select>
       <select class="filter-select" id="style-filter" onchange="filterProducts()"><option value="">주질 전체</option></select>
       <select class="filter-select" id="price-filter" onchange="filterProducts()">
-        <option value="">가격 전체</option>
+        <option value="">도매가 전체</option>
         <option value="0-20000">~2만원</option>
         <option value="20000-40000">2~4만원</option>
         <option value="40000-70000">4~7만원</option>
@@ -336,9 +549,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
     <div class="product-grid" id="product-grid"></div>
     <div class="sel-info">선택된 상품 <span class="sel-badge" id="sel-badge">0</span>개</div>
     <div id="sel-panel" style="display:none;margin-top:.8rem">
-      <div class="sec-label" style="margin-bottom:.5rem">선택된 상품 순서</div>
+      <div class="sec-label" style="margin-bottom:.5rem">선택된 상품</div>
       <div id="sel-tags" style="display:flex;flex-wrap:wrap;gap:6px"></div>
-      <div style="font-size:.65rem;color:var(--ink3);margin-top:.4rem">드래그해서 순서 변경</div>
+      <div class="drag-hint" style="font-size:.65rem;color:var(--ink3);margin-top:.4rem">⠿ 드래그해서 순서 변경</div>
+      <div class="touch-hint" style="font-size:.65rem;color:var(--ink3);margin-top:.4rem;display:none">↑↓ 버튼으로 순서 변경</div>
+    </div>
+    <div style="margin-top:1.2rem">
+      <div class="sec-label">🍶 ​MEMO</div>
+      <textarea class="memo-textarea" id="memo-text" placeholder="예) 초도 선입금 확인 후 출고, 5% 할인"></textarea>
     </div>
   </div>
   <div class="ed-footer">
@@ -354,15 +572,17 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
     <div class="prop-nav-btns">
       <button class="btn" onclick="backToEditor()">← 편집으로</button>
       <button class="btn" onclick="exportHTML()">📤 HTML로 저장</button>
+      <button class="btn" onclick="saveAsImage()">🖼 이미지로 저장</button>
       <button class="btn btn-gold" onclick="window.print()">인쇄 / PDF 저장</button>
     </div>
   </div>
+  <div id="prop-inner-wrap">
   <div class="prop-inner">
     <div class="prop-cover">
       <div class="cover-left">
         <div class="cover-main-row">
           <span class="cover-company">ILOSAKE</span>
-          <span class="cover-kanji">提案書</span>
+          <span class="cover-kanji">卸売提案</span>
           <span class="cover-vsep"></span>
           <span class="cover-biz-name" id="p-title"></span>
         </div>
@@ -374,165 +594,119 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
           <span class="cover-hsep">ㅣ</span>
           <span id="p-meta-tel"></span>
         </div>
-        <div class="cover-ch-badge" id="p-ch-badge"></div>
       </div>
     </div>
+    <div class="price-notice">도매가 기준 / 업소가 참고 표기 (부가세 별도)</div>
     <div class="p-items-grid" id="p-items"></div>
-
-    <!-- 하단 고정 문구 -->
-    <div class="prop-footer-notice">
-      <div class="notice-item"><span class="notice-dot"></span><strong>부가세 별도</strong></div>
-      <div class="notice-item"><span class="notice-dot"></span><strong>병 단가</strong> 기준</div>
-      <div class="notice-item"><span class="notice-dot"></span>반품은 <strong>발주일로부터 3개월 이내</strong></div>
+    <div class="prop-memo" id="p-memo" style="display:none">
+      <div class="prop-memo-title">🍶 ​MEMO</div>
+      <div class="prop-memo-body" id="p-memo-body"></div>
     </div>
   </div>
 </div>
+</div>
 
 <script>
-/* ────────────────────────────────────────────
-   채널 설정 — 이 배열에 추가하면 자동으로 버튼 생성
-   sheetName: 구글 스프레드시트의 시트(탭) 이름
-──────────────────────────────────────────── */
-const CHANNELS = [
-  {
-    id: 'general',
-    name: '일반도매',
-    nameEn: 'General',
-    icon: '🏪',
-    desc: '일반 도매 단가 적용',
-    sheetName: '일반도매',
-  },
-  {
-    id: 'jeju',
-    name: '제주도매',
-    nameEn: 'Jeju',
-    icon: '🌊',
-    desc: '제주 지역 도매 단가 적용',
-    sheetName: '제주도매',
-  },
-  // 채널 추가 시 여기에 객체를 넣으면 됩니다.
-  // {
-  //   id: 'busan',
-  //   name: '부산도매',
-  //   nameEn: 'Busan',
-  //   icon: '⚓',
-  //   desc: '부산 지역 도매 단가 적용',
-  //   sheetName: '부산도매',
-  // },
-];
+/* ── IndexedDB (이미지만) ── */
 
-const SPREADSHEET_ID = '2PACX-1vRXIrUz9nOYixf105xs9NxyABmpWptkUWGkDzr9pqxz2H78jh-8wOrSWlVu2Mff71yGUG28YbjP578f';
-const GITHUB_IMG = 'https://natui714.github.io/sake-proposal/';
 
+/* ── 상태 ── */
 let allProducts = [];
-let imageMap    = {};
+let imageMap    = {};   // name → dataURL
 let selected    = new Set();
-let selectedOrder = [];
-let activeChannel = null;
 
-/* ── 채널 선택 화면 렌더링 ── */
-function renderChannelGrid() {
-  const grid = document.getElementById('ch-grid');
-  grid.innerHTML = CHANNELS.map(ch => `
-    <button class="ch-btn" id="chbtn-${ch.id}" onclick="selectChannel('${ch.id}')">
-      <span class="ch-btn-icon">${ch.icon}</span>
-      <span class="ch-btn-name">${ch.name}</span>
-      <span class="ch-btn-desc">${ch.desc}</span>
-    </button>
-  `).join('');
-}
+/* ── 초기화: 저장된 이미지 불러오기 ── */
+/* ── 도매 시트 CSV URL ── */
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRXIrUz9nOYixf105xs9NxyABmpWptkUWGkDzr9pqxz2H78jh-8wOrSWlVu2Mff71yGUG28YbjP578f/pub?output=csv&sheet=%EB%8F%84%EB%A7%A4';
+const CSV_PROXY = 'https://corsproxy.io/?' + encodeURIComponent(CSV_URL);
 
-function selectChannel(id) {
-  activeChannel = CHANNELS.find(c => c.id === id);
-  document.querySelectorAll('.ch-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('chbtn-' + id)?.classList.add('active');
-  document.getElementById('ch-selected-label').textContent = `선택: ${activeChannel.name}`;
-  document.getElementById('ch-confirm').disabled = false;
-}
-
-async function confirmChannel() {
-  if (!activeChannel) return;
-  document.getElementById('channel-select').style.display = 'none';
-  document.getElementById('loading').style.display = 'flex';
+async function init() {
   try {
-    await loadFromSheet(activeChannel.sheetName);
+    await loadFromSheet();
     document.getElementById('loading').style.display = 'none';
     document.getElementById('editor').style.display = 'flex';
-    document.getElementById('ch-badge-header').textContent = activeChannel.name;
   } catch(e) {
     console.error('시트 로드 실패:', e);
+    // 실패해도 에디터 보여주고 모달 띄우기
     document.getElementById('loading').style.display = 'none';
-    document.getElementById('channel-select').style.display = 'flex';
-    alert('데이터를 불러오지 못했습니다. 인터넷 연결 또는 시트 이름을 확인해주세요.\n시트명: ' + activeChannel.sheetName);
+    document.getElementById('editor').style.display = 'flex';
+    document.getElementById('xlsx-modal').style.display = 'flex';
   }
 }
 
-function goChannelSelect() {
-  selected.clear();
-  selectedOrder = [];
-  allProducts = [];
-  document.getElementById('editor').style.display = 'none';
-  document.getElementById('channel-select').style.display = 'flex';
-}
-
-/* ── 구글 시트 로드 ── */
-async function loadFromSheet(sheetName) {
-  document.getElementById('loading-txt').textContent = `[${sheetName}] 데이터 불러오는 중...`;
-  const url = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?output=csv&gid=`;
-
-  // 시트 이름으로 gid를 직접 찾을 수 없으므로 sheetName 파라미터 사용
-  const csvUrl = `https://docs.google.com/spreadsheets/d/e/${SPREADSHEET_ID}/pub?output=csv&sheet=${encodeURIComponent(sheetName)}`;
-  const proxy = 'https://corsproxy.io/?' + encodeURIComponent(csvUrl);
-
-  const res = await fetch(proxy);
-  if (!res.ok) throw new Error('fetch 실패: ' + res.status);
+async function loadFromSheet() {
+  document.getElementById('loading-txt').textContent = '도매 상품 데이터 불러오는 중...';
+  const res = await fetch(CSV_PROXY);
+  if (!res.ok) throw new Error('fetch 실패');
   const text = await res.text();
   allProducts = parseCSV(text);
-  if (!allProducts.length) throw new Error('상품 데이터 없음');
   buildFilters();
   renderGrid(allProducts);
   document.getElementById('genmonth').value = new Date().toISOString().slice(0,7);
-  document.getElementById('ed-meta').textContent = `${activeChannel?.name || ''} · 상품 ${allProducts.length}개`;
+  document.getElementById('ed-meta').textContent = `도매 ${allProducts.length}개`;
 }
 
-/* ── CSV 파싱
-   컬럼 순서 (0-based):
-   0:순번 1:상품명(KR) 2:상품명(JP) 3:용량 4:업소가 5:도수
-   6:등급 7:주질 8:정미보합 9:원료 10:생산지 11:설명
-   12:본입수 13:바코드
-── */
 function parseCSV(text) {
+  // 헤더명 기반 파싱 (도매 시트 전용: 도매가/본입수/바코드 포함)
   const products = [];
   let pos = 0;
-  // 헤더 행 스킵
-  while (pos < text.length && text[pos] !== '\n') pos++;
-  pos++;
+
+  // 헤더 행 읽기
+  const headerRow = readRow();
+  if (!headerRow) return products;
+  const hdr = headerRow.map(h => String(h||'').trim());
+  const colIdx = name => { const i = hdr.indexOf(name); return i >= 0 ? i : -1; };
+
+  const C = {
+    name:      colIdx('상품명'),
+    nameJp:    colIdx('상품명(일본어)'),
+    vol:       colIdx('용량'),
+    price:     colIdx('업소가'),
+    wholesale: colIdx('도매가'),
+    alc:       colIdx('알코올'),
+    grade:     colIdx('등급'),
+    style:     colIdx('주질'),
+    rice:      colIdx('정미보합'),
+    ingr:      colIdx('원료'),
+    region:    colIdx('생산지'),
+    desc:      colIdx('설명'),
+    boniipsu:  colIdx('본입수'),
+    barcode:   colIdx('바코드'),
+  };
+
+  // 헤더가 없으면 위치 기반 폴백
+  const g = (row, key, fb) => {
+    const i = C[key];
+    return String((i >= 0 ? row[i] : row[fb]) || '');
+  };
 
   while (pos < text.length) {
     const row = readRow();
     if (!row) break;
-    const name = (row[1]||'').trim();
+    const name = g(row,'name',1).trim();
     if (!name || name === '상품명') continue;
-    let rice = parseFloat(row[8]);
+    let rice = parseFloat(g(row,'rice',8));
     if (rice > 0 && rice < 1) rice = Math.round(rice * 100);
     else rice = Math.round(rice) || 0;
-    let price = parseInt((row[4]||'').replace(/[^0-9]/g,'')) || 0;
-    let alc = parseFloat(row[5]) || 0;
+    let price     = parseInt(g(row,'price',4).replace(/[^0-9]/g,'')) || 0;
+    let wholesale = parseInt(g(row,'wholesale',-1).replace(/[^0-9]/g,'')) || 0;
+    let alc       = parseFloat(g(row,'alc',5)) || 0;
     products.push({
       id: products.length,
       name,
-      nameJp:  (row[2]||'').trim(),
-      vol:     row[3] ? String(Math.round(parseFloat(row[3])||0)) : '',
-      price:   price ? String(price) : '',
-      alc:     alc ? String(alc) : '',
-      grade:   (row[6]||'').trim(),
-      style:   (row[7]||'').trim(),
-      rice:    rice ? String(rice) : '',
-      ingr:    (row[9]||'').trim(),
-      region:  (row[10]||'').trim(),
-      desc:    (row[11]||'').replace(/\n/g,'<br>').trim(),
-      caseQty: (row[12]||'').trim(),   // 본입수
-      barcode: (row[13]||'').trim(),   // 바코드
+      nameJp:    g(row,'nameJp',2).trim(),
+      vol:       g(row,'vol',3) ? String(Math.round(parseFloat(g(row,'vol',3))||0)) : '',
+      price:     price ? String(price) : '',
+      wholesale: wholesale ? String(wholesale) : '',
+      alc:       alc ? String(alc) : '',
+      grade:     g(row,'grade',6).trim(),
+      style:     g(row,'style',7).trim(),
+      rice:      rice ? String(rice) : '',
+      ingr:      g(row,'ingr',9).trim(),
+      region:    g(row,'region',10).trim(),
+      desc:      g(row,'desc',11).replace(/\n/g,'<br>').trim(),
+      boniipsu:  g(row,'boniipsu',-1).trim(),
+      barcode:   g(row,'barcode',-1).trim(),
     });
   }
   return products;
@@ -566,10 +740,161 @@ function parseCSV(text) {
     return null;
   }
 }
+function parseCSVRow(row) {
+  const result = [];
+  let cur = '', inQ = false;
+  for (let i = 0; i < row.length; i++) {
+    const c = row[i];
+    if (c === '"' && row[i+1] === '"') { cur += '"'; i++; }
+    else if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur);
+  return result;
+}
+
+
+function openXlsxModal() {
+  document.getElementById('xlsx-status').textContent = '';
+  document.getElementById('xlsx-zone').classList.remove('done');
+  document.getElementById('btn-start').disabled = true;
+  document.getElementById('xlsx-modal').style.display = 'flex';
+}
+
+function closeXlsxModal() {
+  if (!allProducts.length) return;
+  document.getElementById('xlsx-modal').style.display = 'none';
+}
+
+/* ── 엑셀 처리 (매번) ── */
+function handleXlsx(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb   = XLSX.read(e.target.result, {type:'array'});
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:''});
+
+      allProducts = [];
+      for (let i = 1; i < rows.length; i++) {
+        const r = rows[i];
+        const name = String(r[1]||'').trim();
+        if (!name) continue;
+
+        let rice = r[8];
+        if (typeof rice==='number' && rice>0 && rice<1) rice = Math.round(rice*100);
+        else if (typeof rice==='number') rice = Math.round(rice);
+
+        let price = r[4];
+        if (typeof price==='number') price = Math.round(price);
+
+        let alc = r[5];
+        if (typeof alc==='number' && alc===Math.floor(alc)) alc = Math.floor(alc);
+
+        let wholesale = r[5]; // 도매가 컬럼 위치 (엑셀 업로드 폴백용)
+        if (typeof wholesale==='number') wholesale = Math.round(wholesale);
+        allProducts.push({
+          id: allProducts.length,
+          name,
+          nameJp:    String(r[2]||'').trim(),
+          vol:       r[3] ? String(Math.round(Number(r[3]))) : '',
+          price:     price ? String(price) : '',
+          wholesale: wholesale ? String(wholesale) : '',
+          alc:       alc!=='' ? String(alc) : '',
+          grade:     String(r[6]||'').trim(),
+          style:     String(r[7]||'').trim(),
+          rice:      rice!=='' ? String(rice) : '',
+          ingr:      String(r[9]||'').trim(),
+          region:    String(r[10]||'').trim(),
+          desc:      String(r[11]||'').replace(/\n/g,'<br>').trim(),
+          boniipsu:  String(r[12]||'').trim(),
+          barcode:   String(r[13]||'').trim(),
+        });
+      }
+
+      const now = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+      document.getElementById('xlsx-status').textContent = `✓ ${allProducts.length}개 상품 로드됨`;
+      document.getElementById('xlsx-zone').classList.add('done');
+      document.getElementById('btn-start').disabled = false;
+      document.getElementById('ed-meta').textContent = `상품 ${allProducts.length}개 · ${now}`;
+      buildFilters();
+      renderGrid(allProducts);
+    } catch(err) { alert('엑셀 읽기 오류: ' + err.message); }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* ── 이미지 처리 (저장) ── */
+async function handleImages(files) {
+  const arr = Array.from(files);
+  const total = arr.length;
+  let done = 0;
+
+  document.getElementById('progress-wrap').style.display = 'block';
+  document.getElementById('img-status').textContent = '';
+
+  for (const file of arr) {
+    await new Promise(res => {
+      const key = file.name.replace(/\.[^.]+$/,'').trim();
+      const reader = new FileReader();
+      reader.onload = async ev => {
+        imageMap[key] = ev.target.result;
+        await put('images', {name: key, dataUrl: ev.target.result});
+        done++;
+        document.getElementById('progress-fill').style.width = (done/total*100)+'%';
+        document.getElementById('img-status').textContent = `${done} / ${total}장 저장 중...`;
+        res();
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const now = new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric'});
+  await put('meta', {key:'imgInfo', count: Object.keys(imageMap).length, savedAt: now});
+
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('img-status').textContent = `✓ ${total}장 저장 완료`;
+  document.getElementById('img-zone').classList.add('done');
+  document.getElementById('img-saved-row').style.display = 'flex';
+  document.getElementById('img-saved-txt').textContent = `이미지 ${Object.keys(imageMap).length}장 저장됨 (${now})`;
+  document.getElementById('img-label').textContent = '이미지 추가 / 교체';
+}
+
+async function clearImages() {
+  if (!confirm('저장된 이미지를 모두 삭제할까요?')) return;
+  await clearStore('images');
+  await clearStore('meta');
+  imageMap = {};
+  document.getElementById('img-saved-row').style.display = 'none';
+  document.getElementById('img-zone').classList.remove('done');
+  document.getElementById('img-status').textContent = '';
+  document.getElementById('img-label').textContent = '상품 이미지 업로드';
+}
 
 /* ── 이미지 매칭 ── */
+const GITHUB_IMG = 'https://natui714.github.io/sake-proposal/';
+
 function findImg(name) {
+  // 깃허브 이미지 URL 자동 생성 (상품명.png)
   return GITHUB_IMG + encodeURIComponent(name) + '.png';
+}
+
+/* ── 앱 시작 ── */
+function startApp() {
+  if (!allProducts.length) return;
+  buildFilters();
+  renderGrid(allProducts);
+  document.getElementById('genmonth').value = new Date().toISOString().slice(0,7);
+  document.getElementById('ed-meta').textContent =
+    `상품 ${allProducts.length}개 · 이미지 ${Object.keys(imageMap).length}장`;
+  document.getElementById('setup').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
+}
+
+function goSetup() {
+  openXlsxModal();
 }
 
 /* ── 필터 & 그리드 ── */
@@ -595,14 +920,15 @@ function renderGrid(products) {
   grid.innerHTML = products.map(p => {
     const idx = allProducts.indexOf(p);
     const src = findImg(p.name);
-    const imgHtml = `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="prod-img-ph" style="display:none">🍶</span>`;
+    const imgHtml = src ? `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/><span class="prod-img-ph" style="display:none">🍶</span>` : `<span class="prod-img-ph">🍶</span>`;
     return `<div class="prod-card ${selected.has(idx)?'sel':''}" onclick="toggleSelect(${idx})" data-idx="${idx}">
       <div class="prod-img-wrap">${imgHtml}</div>
       <div class="prod-name">${p.name}</div>
       <div class="prod-grade">${p.grade}</div>
       <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
         ${p.vol?`<span style="font-size:.62rem;color:var(--ink3)">${p.vol}ml</span>`:''}
-        ${p.price?`<span class="prod-price">${fmtPrice(p.price)}</span>`:''}
+        ${p.wholesale?`<span class="prod-price" style="color:var(--gold)">${fmtPrice(p.wholesale)}</span>`:''}
+        ${p.price?`<span style="font-size:.6rem;color:var(--ink3)">${fmtPrice(p.price)}</span>`:''}
       </div>
     </div>`;
   }).join('');
@@ -614,22 +940,27 @@ function toggleSelect(idx) {
     selectedOrder = selectedOrder.filter(i => i !== idx);
   } else {
     selected.add(idx);
-    selectedOrder.push(idx);
   }
   document.querySelector(`[data-idx="${idx}"]`)?.classList.toggle('sel', selected.has(idx));
   document.getElementById('sel-badge').textContent = selected.size;
   renderSelTags();
 }
 
+// 선택 순서 배열 (드래그로 재정렬 가능)
+let selectedOrder = [];
+
 function renderSelTags() {
   const panel = document.getElementById('sel-panel');
   const container = document.getElementById('sel-tags');
-  if (!selected.size) { panel.style.display = 'none'; return; }
+  if (!selected.size) { panel.style.display = 'none'; selectedOrder = []; return; }
+  // selectedOrder 동기화
   selectedOrder = selectedOrder.filter(i => selected.has(i));
   selected.forEach(i => { if (!selectedOrder.includes(i)) selectedOrder.push(i); });
   panel.style.display = 'block';
   container.innerHTML = selectedOrder.map((idx, pos) => {
     const p = allProducts[idx];
+    const isFirst = pos === 0;
+    const isLast = pos === selectedOrder.length - 1;
     return `<div class="sel-tag" draggable="true"
       ondragstart="dragStart(event,${pos})"
       ondragover="dragOver(event)"
@@ -639,6 +970,10 @@ function renderSelTags() {
       <span class="sel-tag-num">${pos+1}</span>
       <span class="sel-tag-name">${p.name}</span>
       ${p.vol ? `<span class="sel-tag-vol">${p.vol}ml</span>` : ''}
+      <span class="sel-tag-arrows">
+        <button class="sel-tag-arrow" onclick="moveTag(${pos},-1)" ${isFirst?'disabled':''}>▲</button>
+        <button class="sel-tag-arrow" onclick="moveTag(${pos},1)" ${isLast?'disabled':''}>▼</button>
+      </span>
       <button class="sel-tag-remove" onclick="removeSelected(${idx})" title="제거">✕</button>
     </div>`;
   }).join('');
@@ -653,7 +988,11 @@ function removeSelected(idx) {
 }
 
 let dragSrcPos = null;
-function dragStart(e, pos) { dragSrcPos = pos; e.target.style.opacity = '.4'; e.dataTransfer.effectAllowed = 'move'; }
+function dragStart(e, pos) {
+  dragSrcPos = pos;
+  e.target.style.opacity = '.4';
+  e.dataTransfer.effectAllowed = 'move';
+}
 function dragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
 function dragDrop(e, pos) {
   e.preventDefault();
@@ -663,6 +1002,15 @@ function dragDrop(e, pos) {
   renderSelTags();
 }
 function dragEnd(e) { dragSrcPos = null; e.target.style.opacity = '1'; renderSelTags(); }
+
+function moveTag(pos, dir) {
+  const newPos = pos + dir;
+  if (newPos < 0 || newPos >= selectedOrder.length) return;
+  const tmp = selectedOrder[pos];
+  selectedOrder[pos] = selectedOrder[newPos];
+  selectedOrder[newPos] = tmp;
+  renderSelTags();
+}
 
 function filterProducts() {
   const q = document.getElementById('search').value.replace(/\s/g,'').toLowerCase();
@@ -676,7 +1024,8 @@ function filterProducts() {
     let priceOk = true;
     if (pr) {
       const [min, max] = pr.split('-').map(Number);
-      priceOk = (parseInt(p.price)||0) >= min && (parseInt(p.price)||0) <= max;
+      const wPrice = parseInt(p.wholesale || p.price) || 0;
+      priceOk = wPrice >= min && wPrice <= max;
     }
     return ok && gradeOk && styleOk && priceOk;
   });
@@ -686,39 +1035,47 @@ function filterProducts() {
 /* ── 제안서 생성 ── */
 function generateProposal() {
   if (!selected.size) { alert('상품을 1개 이상 선택해주세요.'); return; }
-  const biz      = document.getElementById('bizname').value.trim() || '거래처';
-  const month    = document.getElementById('genmonth').value;
+  const biz = document.getElementById('bizname').value.trim() || '거래처';
+  const month = document.getElementById('genmonth').value;
   const monthStr = month ? new Date(month+'-01').toLocaleDateString('ko-KR',{year:'numeric',month:'long'}) : '';
+
   const salesName = document.getElementById('sales-name').value.trim();
   const salesTel  = document.getElementById('sales-tel').value.trim();
-
   document.getElementById('p-title').textContent     = biz;
   document.getElementById('p-nav-title').textContent = biz + ' 제안서';
   document.getElementById('p-meta-date').textContent = monthStr ? monthStr + ' 기준' : '';
   document.getElementById('p-meta-name').textContent = salesName || '';
   document.getElementById('p-meta-tel').textContent  = salesTel  || '';
-  document.getElementById('p-ch-badge').textContent  = activeChannel?.name || '';
+
 
   const items = selectedOrder.map(i => allProducts[i]);
   document.getElementById('p-items').innerHTML = items.map((p,n) => {
     const src = findImg(p.name);
-    const imgHtml = `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';this.nextElementSibling.style.height='44mm'" style="background:transparent"/><div class="p-img-ph" style="display:none">🍶</div>`;
+    const imgHtml = src
+      ? `<img src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';this.nextElementSibling.style.height='44mm'" style="background:transparent"/><div class="p-img-ph" style="display:none">🍶</div>`
+      : `<div class="p-img-ph">🍶</div>`;
     const specs = [
-      {label:'업소가',   value: fmtPrice(p.price), cls:'price'},
-      {label:'ALC',     value: p.alc    ? p.alc+'%'  : ''},
-      {label:'주질',     value: p.style},
-      {label:'정미보합', value: p.rice   ? p.rice+'%' : ''},
-      {label:'원료',     value: p.ingr},
-      {label:'생산지',   value: p.region},
-      {label:'본입수',   value: p.caseQty},
-      {label:'바코드',   value: p.barcode},
+      {label:'도매가',  value: fmtPrice(p.wholesale),   cls:'wholesale'},
+      {label:'업소가',  value: fmtPrice(p.price),       cls:'price'},
+      {label:'ALC',    value: p.alc   ? p.alc+'%'   : ''},
+      {label:'주질',    value: p.style},
+      {label:'정미보합', value: p.rice  ? p.rice+'%'  : ''},
+      {label:'원료',    value: p.ingr},
+      {label:'생산지',  value: p.region},
+      {label:'본입수',  value: p.boniipsu},
+      {label:'바코드',  value: p.barcode},
     ].filter(s=>s.value);
-    const specsNoPrice = specs.filter(s=>s.cls!=='price');
+    const specsNoPrice = specs.filter(s=>s.cls!=='price'&&s.cls!=='wholesale');
     const volStr = p.vol ? p.vol+'ml' : '';
+    // 가격 표시: 도매가 / 업소가
+    const priceDisplay = [
+      p.wholesale ? '도매 ' + fmtPrice(p.wholesale) : '',
+      p.price     ? '업소 ' + fmtPrice(p.price)     : '',
+    ].filter(Boolean).join('  |  ');
     return `<div class="prop-item">
       <div class="p-img-col">
         <div class="p-img-wrap"><div class="p-num">${n+1}</div>${imgHtml}</div>
-        ${p.price?`<div class="p-img-price">${volStr ? volStr+'  ' : ''}${fmtPrice(p.price)}</div>`:''}
+        ${priceDisplay?`<div class="p-img-price">${volStr ? volStr+'  ' : ''}${priceDisplay}</div>`:''}
       </div>
       <div>
         <div class="p-name-row"><span class="p-name">${p.name}</span><span class="p-name-jp">${p.nameJp}</span><span class="p-grade">${p.grade}</span></div>
@@ -730,42 +1087,41 @@ function generateProposal() {
 
   document.getElementById('editor').style.display   = 'none';
   document.getElementById('proposal').style.display = 'block';
+  const memo = document.getElementById('memo-text').value.trim();
+  const memoEl = document.getElementById('p-memo');
+  if (memo) { document.getElementById('p-memo-body').textContent = memo; memoEl.style.display = 'block'; }
+  else { memoEl.style.display = 'none'; }
   window.scrollTo(0,0);
 }
 
-/* ── HTML 내보내기 ── */
+
 function exportHTML() {
   const bizName  = document.getElementById('p-title').textContent;
-  const title    = bizName + ' 상품 제안서';
+  const title    = bizName + ' 도매 제안서';
   const metaDate = document.getElementById('p-meta-date').textContent;
   const metaName = document.getElementById('p-meta-name').textContent;
   const metaTel  = document.getElementById('p-meta-tel').textContent;
-  const chBadge  = document.getElementById('p-ch-badge').textContent;
   const items    = document.getElementById('p-items').innerHTML;
-
-  const footerHtml = `<div class="prop-footer-notice">
-    <div class="notice-item"><span class="notice-dot"></span><strong>부가세 별도</strong></div>
-    <div class="notice-item"><span class="notice-dot"></span><strong>병 단가</strong> 기준</div>
-    <div class="notice-item"><span class="notice-dot"></span>반품은 <strong>발주일로부터 3개월 이내</strong></div>
-  </div>`;
+  const memoText = document.getElementById('memo-text').value.trim();
 
   const coverHtml = `<div class="prop-cover">
-    <div class="cover-left"><div class="cover-main-row">
-      <span class="cover-company">ILOSAKE</span>
-      <span class="cover-kanji">提案書</span>
-      <span class="cover-vsep"></span>
-      <span class="cover-biz-name">${bizName}</span>
-    </div></div>
+    <div class="cover-left">
+      <div class="cover-main-row">
+        <span class="cover-company">ILOSAKE</span>
+        <span class="cover-kanji">卸売提案</span>
+        <span class="cover-vsep"></span>
+        <span class="cover-biz-name">${bizName}</span>
+      </div>
+    </div>
     <div class="cover-right">
       <div class="cover-date-row">${metaDate}</div>
       <div class="cover-sales-row"><span>${metaName}</span><span class="cover-hsep">ㅣ</span><span>${metaTel}</span></div>
-      <div class="cover-ch-badge">${chBadge}</div>
     </div>
   </div>`;
 
   const css = `
     @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500&family=Shippori+Mincho:wght@400;600&display=swap');
-    :root{--ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;--paper:#f7f3ec;--paper2:transparent;--paper3:#ddd8cc;--gold:#c8963c;--gold2:#a87830;--border:rgba(26,18,8,0.1)}
+    :root{--ink:#1a1208;--ink2:#3d2f1a;--ink3:#7a6248;--paper:#f7f3ec;--paper2:transparent;--paper3:#ddd8cc;--gold:#2563a8;--gold2:#1a4f8a;--border:rgba(26,18,8,0.1)}
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--ink)}
     .prop-inner{max-width:860px;margin:0 auto;padding:1rem 1.5rem 3rem}
@@ -780,54 +1136,167 @@ function exportHTML() {
     .cover-date-row{font-size:.7rem;color:rgba(247,243,236,.45)}
     .cover-sales-row{display:flex;align-items:center;gap:.4rem;font-size:.88rem;font-weight:500;color:#fff}
     .cover-hsep{color:rgba(247,243,236,.3);font-size:.75rem}
-    .cover-ch-badge{font-size:.6rem;background:rgba(200,150,60,.25);color:#c8963c;border:1px solid rgba(200,150,60,.4);padding:2px 8px;border-radius:99px;font-weight:600;margin-top:.2rem}
     .p-items-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 1.2rem}
     .prop-item{display:grid;grid-template-columns:80px 1fr;gap:.8rem;padding:.75rem 0;border-bottom:1px solid var(--border);break-inside:avoid}
     .prop-item:last-child{border-bottom:none}
     .p-img-col{display:flex;flex-direction:column;gap:0;background:transparent!important}
     .p-img-wrap{position:relative;background:transparent!important;height:200px;overflow:visible}
     .p-img-wrap img{width:100%;height:200px;object-fit:contain;border-radius:5px;background:transparent;display:block}
-    .p-img-ph{width:100%;aspect-ratio:2/3;background:transparent;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#ddd8cc}
+    .p-img-ph{width:100%;aspect-ratio:2/3;background:var(--paper2);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--paper3)}
     .p-num{position:absolute;top:-7px;left:-7px;width:20px;height:20px;background:#1a1208;color:#f7f3ec;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:700}
-    .p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:#a87830}
+    .p-img-price{text-align:center;font-size:.72rem;font-weight:600;color:var(--gold2)}
     .p-name{font-family:'Noto Serif KR',serif;font-size:1rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:.25rem}
-    .p-name-row{display:flex;align-items:baseline;gap:.45rem;flex-wrap:wrap;margin-bottom:.3rem}
-    .p-grade{display:inline-block;padding:1px 7px;border:1px solid #c8963c;color:#a87830;font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
-    .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:#7a6248}
+    .p-sub-row{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap;margin-bottom:.25rem}
+    .p-grade{display:inline-block;padding:1px 7px;border:1px solid var(--gold);color:var(--gold2);font-size:.58rem;letter-spacing:.04em;border-radius:3px;font-weight:500;white-space:nowrap}
+    .p-name-jp{font-family:'Shippori Mincho',serif;font-size:.68rem;color:var(--ink3)}
     .p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.4rem}
-    .spec-box{background:transparent;border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
-    .spec-label{font-size:.52rem;color:#7a6248;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
-    .spec-val{font-size:.68rem;font-weight:500;color:#1a1208;line-height:1.2}
-    .spec-val.price{color:#a87830}
-    .p-desc{font-size:.63rem;color:#3d2f1a;line-height:1.65;font-weight:300;border-left:1.5px solid #c8963c;padding-left:.5rem}
-    .p-desc-wrap{display:flex;gap:.4rem}
-    .p-desc-bar{width:2px;background:#c8963c;flex-shrink:0;border-radius:1px}
-    .prop-footer-notice{margin-top:1.5rem;border-top:1px solid rgba(26,18,8,0.15);padding-top:.9rem;display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap}
-    .notice-item{display:flex;align-items:center;gap:.35rem;font-size:.67rem;color:#7a6248;line-height:1.4}
-    .notice-dot{width:4px;height:4px;border-radius:50%;background:#c8963c;flex-shrink:0}
-    .notice-item strong{color:#3d2f1a;font-weight:600}
+    .spec-box{background:var(--paper2);border-radius:4px;padding:3px 6px;display:flex;gap:3px;align-items:baseline}
+    .spec-label{font-size:.52rem;color:var(--ink3);letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+    .spec-val{font-size:.68rem;font-weight:500;color:var(--ink);line-height:1.2}
+    .spec-val.price{color:var(--gold2)}
+    .spec-val.wholesale{color:var(--gold);font-weight:700}
+    .p-desc{font-size:.63rem;color:var(--ink2);line-height:1.65;font-weight:300;border-left:1.5px solid var(--gold);padding-left:.5rem;display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}
+    .prop-memo{margin-top:1.2rem;border:1px solid rgba(26,18,8,0.22);border-radius:8px;padding:1rem 1.2rem;background:rgba(37,99,168,.04)}
+    .prop-memo-title{font-size:.62rem;font-weight:600;color:#7a6248;letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;gap:8px;margin-bottom:.65rem}
+    .prop-memo-title::after{content:'';flex:1;height:1px;background:rgba(26,18,8,0.22)}
+    .prop-memo-body{font-size:.78rem;color:#3d2f1a;line-height:1.75;white-space:pre-wrap;word-break:break-all;font-family:'Noto Sans KR',sans-serif}
+    .price-notice{font-size:.7rem;color:#7a6248;text-align:right;margin-bottom:.5rem;margin-top:.3rem;letter-spacing:.02em}
+    
   `;
 
   const doc = `<!DOCTYPE html>
-<html lang="ko"><head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>${title}</title>
 <style>${css}</style>
-</head><body>
+</head>
+<body>
 <div class="prop-inner">
   ${coverHtml}
+  <div class="price-notice">도매가 기준 / 업소가 참고 표기 (부가세 별도)</div>
   <div class="p-items-grid">${items}</div>
-  ${footerHtml}
+  ${memoText ? `<div class="prop-memo"><div class="prop-memo-title">🍶 ​MEMO</div><div class="prop-memo-body">${memoText.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div></div>` : ''}
 </div>
-</body></html>`;
+</body>
+</html>`;
 
   const blob = new Blob([doc], {type: 'text/html;charset=utf-8'});
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  a.href = url;
-  a.download = (bizName||'제안서').replace(/\s+/g,'_') + '.html';
+  a.href     = url;
+  a.download = (bizName || '도매제안서').replace(/\s+/g,'_') + '_도매제안서.html';
   a.click();
   URL.revokeObjectURL(url);
+}
+
+async function saveAsImage() {
+  const bizName = document.getElementById('p-title').textContent || '제안서';
+
+  // 인쇄용 스타일시트를 강제 적용한 임시 iframe으로 캡처
+  const propInner = document.getElementById('prop-inner-wrap');
+
+  // 로딩 표시
+  const nav = document.querySelector('.prop-nav');
+  const origBtns = nav.querySelector('.prop-nav-btns').innerHTML;
+  nav.querySelector('.prop-nav-btns').innerHTML = '<span style="color:rgba(247,243,236,.5);font-size:.8rem">🖼 이미지 생성 중...</span>';
+
+  try {
+    // 현재 페이지의 전체 HTML을 가져와서 인쇄 모드로 렌더링
+    const pageHTML = document.documentElement.outerHTML;
+
+    // iframe 생성 (A4 너비 기준: 794px = A4 @ 96dpi)
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:794px;height:auto;border:none;visibility:hidden';
+    document.body.appendChild(iframe);
+
+    const iDoc = iframe.contentDocument || iframe.contentWindow.document;
+    iDoc.open();
+    iDoc.write(pageHTML);
+    iDoc.close();
+
+    // iframe 내부에서 인쇄 CSS 강제 적용 + 불필요한 요소 숨기기
+    await new Promise(r => setTimeout(r, 800)); // 폰트/이미지 로드 대기
+
+    const iWin = iframe.contentWindow;
+    const iBody = iDoc.body;
+
+    // 인쇄 미디어 쿼리 시뮬레이션: @media print 스타일을 강제 적용
+    const printStyle = iDoc.createElement('style');
+    printStyle.textContent = `
+      #editor, #setup, #loading { display:none!important; }
+      #proposal { display:block!important; }
+      .prop-nav { display:none!important; }
+      body { background:#f7f3ec!important; }
+      * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; }
+      :root { --paper2:transparent!important; }
+      .prop-inner { max-width:794px!important; margin:0 auto!important; padding:8px 16px 24px!important; }
+      .prop-cover {
+        background:#1a1208!important; border-radius:6px!important;
+        padding:6px 14px!important; margin-bottom:4px!important;
+        display:flex!important; align-items:center!important; justify-content:space-between!important;
+      }
+      #prop-inner-wrap { padding:0!important; }
+      .p-items-grid { display:grid!important; grid-template-columns:1fr 1fr!important; gap:0 16px!important; }
+      .prop-item {
+        display:grid!important; grid-template-columns:110px 1fr!important;
+        gap:8px!important; padding:10px 0 8px 10px!important;
+        border-bottom:.5px solid rgba(26,18,8,0.12)!important;
+        break-inside:avoid!important; overflow:visible!important;
+      }
+      .p-img-col { overflow:visible!important; }
+      .p-img-wrap { height:160px!important; overflow:visible!important; }
+      .p-img-wrap img { height:160px!important; object-fit:contain!important; }
+      .p-num { position:absolute!important; top:-6px!important; left:-6px!important; z-index:2!important; }
+      .p-num { background:#1a1208!important; color:#fff!important; border-radius:50%!important; }
+      .prop-cover { -webkit-print-color-adjust:exact!important; }
+      .p-grade { border:1px solid #2563a8!important; color:#1a4f8a!important; -webkit-print-color-adjust:exact!important; }
+      .p-desc-bar { background:#2563a8!important; -webkit-print-color-adjust:exact!important; }
+      .spec-box { background:#f0ece4!important; -webkit-print-color-adjust:exact!important; }
+      .prop-memo { border:.5px solid rgba(26,18,8,0.2)!important; background:rgba(37,99,168,.04)!important; -webkit-print-color-adjust:exact!important; }
+    `;
+    iDoc.head.appendChild(printStyle);
+
+    await new Promise(r => setTimeout(r, 300));
+
+    // 캡처 대상: prop-inner-wrap
+    const target = iDoc.getElementById('prop-inner-wrap');
+    if (!target) throw new Error('제안서 영역을 찾을 수 없습니다.');
+
+    const canvas = await html2canvas(target, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: '#f7f3ec',
+      logging: false,
+      windowWidth: 794,
+    });
+
+    document.body.removeChild(iframe);
+
+    const link = document.createElement('a');
+    link.download = bizName.replace(/\s+/g,'_') + '_도매제안서.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  } catch(e) {
+    alert('이미지 저장 중 오류가 발생했습니다.\n' + e.message);
+  } finally {
+    nav.querySelector('.prop-nav-btns').innerHTML = origBtns;
+    // iframe 혹시 남아있으면 제거
+    document.querySelectorAll('iframe').forEach(f => f.remove());
+  }
+}
+
+async function refreshSheet() {
+  document.getElementById('editor').style.display = 'none';
+  document.getElementById('loading').style.display = 'flex';
+  try {
+    await loadFromSheet();
+  } catch(e) {
+    alert('데이터 로드 실패. 인터넷 연결을 확인해주세요.');
+  }
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('editor').style.display = 'flex';
 }
 
 function backToEditor() {
@@ -837,24 +1306,38 @@ function backToEditor() {
 
 function resetAll() {
   selected.clear();
+  document.getElementById('bizname').value          = '';
+  document.getElementById('genmonth').value         = new Date().toISOString().slice(0,7);
+  document.getElementById('search').value           = '';
+  document.getElementById('grade-filter').value     = '';
+  document.getElementById('style-filter').value     = '';
+  document.getElementById('price-filter').value     = '';
+  document.getElementById('memo-text').value        = '';
   selectedOrder = [];
-  document.getElementById('bizname').value      = '';
-  document.getElementById('genmonth').value     = new Date().toISOString().slice(0,7);
-  document.getElementById('search').value       = '';
-  document.getElementById('grade-filter').value = '';
-  document.getElementById('style-filter').value = '';
-  document.getElementById('price-filter').value = '';
-  document.getElementById('sel-badge').textContent = '0';
+  document.getElementById('sel-badge').textContent  = '0';
   renderSelTags();
   renderGrid(allProducts);
 }
 
-/* ── 앱 초기화 ── */
-function init() {
-  renderChannelGrid();
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('channel-select').style.display = 'flex';
+/* drag & drop */
+const xlsxEl = document.getElementById('xlsx-zone');
+if (xlsxEl) {
+  xlsxEl.addEventListener('dragover', e => { e.preventDefault(); xlsxEl.classList.add('drag'); });
+  xlsxEl.addEventListener('dragleave', () => xlsxEl.classList.remove('drag'));
+  xlsxEl.addEventListener('drop', e => { e.preventDefault(); xlsxEl.classList.remove('drag'); handleXlsx(e.dataTransfer.files[0]); });
 }
+
+/* 터치 기기 감지 → ↑↓ 버튼 표시 */
+(function detectTouch() {
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if (isTouch) {
+    document.documentElement.classList.add('is-touch');
+    // ↑↓ 버튼 강제 표시 (CSS media query 보완)
+    const style = document.createElement('style');
+    style.textContent = '.is-touch .sel-tag-arrows{display:flex!important} .is-touch .drag-hint{display:none!important} .is-touch .touch-hint{display:block!important}';
+    document.head.appendChild(style);
+  }
+})();
 
 init();
 </script>
