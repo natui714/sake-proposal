@@ -297,7 +297,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
     <div class="product-grid" id="product-grid"></div>
     <div class="sel-info">선택된 상품 <span class="sel-badge" id="sel-badge">0</span>개 (그룹)</div>
     <div id="sel-panel" style="display:none;margin-top:.8rem">
-      <div class="sec-label" style="margin-bottom:.5rem">선택된 상품</div>
+      <div class="sec-label" style="margin-bottom:.5rem">선택된 상품<button onclick="clearAll()" style="margin-left:auto;background:transparent;border:1px solid var(--border2);border-radius:5px;padding:2px 8px;font-size:.65rem;color:var(--ink3);cursor:pointer;font-family:'Noto Sans KR',sans-serif;">전체 삭제</button></div>
       <div id="sel-tags" class="sel-tags"></div>
       <div class="drag-hint" style="font-size:.65rem;color:var(--ink3);margin-top:.4rem">⠿ 드래그해서 순서 변경</div>
       <div class="touch-hint">↑↓ 버튼으로 순서 변경</div>
@@ -718,6 +718,15 @@ function renderSelTags() {
   container.innerHTML = html;
 }
 
+
+function clearAll() {
+  selected.clear();
+  selectedOrder = [];
+  document.getElementById('sel-badge').textContent = '0';
+  renderSelTags();
+  filterAndRender();
+}
+
 function removeSelected(idx) {
   selected.delete(idx);
   selectedOrder = selectedOrder.filter(function(i){ return i !== idx; });
@@ -828,23 +837,29 @@ function generateProposal() {
     // 용량별 테이블
     var rows = '';
     variants.forEach(function(v) {
+      var bcRaw   = (v.barcode || '').trim();
+      var bcParts = bcRaw.split(';');
+      var bcClean = bcParts[0].trim();
       rows += '<tr>';
-      rows += '<td class="vt-vol">'  + (v.vol      ? v.vol+'ml'       : '-') + '</td>';
-      rows += '<td class="vt-boni">' + (v.boniipsu ? v.boniipsu+'입'  : '-') + '</td>';
+      rows += '<td class="vt-vol">'  + (v.vol      ? v.vol+'ml'            : '-') + '</td>';
+      rows += '<td class="vt-boni">' + (v.boniipsu ? v.boniipsu+'입'       : '-') + '</td>';
       rows += '<td class="vt-w">'    + (v.wholesale ? fmtPrice(v.wholesale) : '-') + '</td>';
-      rows += '<td class="vt-r">'    + (v.price    ? fmtPrice(v.price)    : '-') + '</td>';
-      rows += '<td class="vt-bc">'   + (v.barcode  || '') + '</td>';
+      rows += '<td class="vt-r">'    + (v.price    ? fmtPrice(v.price)      : '-') + '</td>';
+      rows += '<td class="vt-bc">'   + bcClean + '</td>';
       rows += '</tr>';
     });
 
     // 스펙 칩
+    // 주종 코드: 바코드 세번째 세미콜론 구분값
+    var bcParsed   = (p.barcode||'').split(';');
+    var jujongCode = bcParsed.length >= 3 ? bcParsed[2].trim() : '';
+    var jujongDisp = p.jujong ? (jujongCode ? p.jujong+'('+jujongCode+')' : p.jujong) : '';
     var specArr = [
-      {l:'주종',   v:p.jujong},
+      {l:'주종',   v:jujongDisp},
       {l:'ALC',   v:p.alc  ? p.alc+'%'  : ''},
       {l:'등급',   v:p.grade},
       {l:'정미보합',v:p.rice ? p.rice+'%' : ''},
       {l:'원료',   v:p.ingr},
-      {l:'생산지', v:p.region},
     ].filter(function(s){return s.v;});
 
     var specs = '';
@@ -905,7 +920,7 @@ function copyCardInfo(e, idx) {
   if (p.price)     parts.push('업소가: ' + fmtPrice(p.price));
   if (barcode)     parts.push('바코드: ' + barcode);
   if (jujongStr)   parts.push('주종: ' + jujongStr);
-  var text = p.name + (p.vol ? ' ' + p.vol + 'ml' : '') + '\n' + parts.join('\n');
+  var text = p.name + '\n' + parts.join('\n');
 
   navigator.clipboard.writeText(text).then(function() {
     showCopyToast(e.target);
