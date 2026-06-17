@@ -164,11 +164,11 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--paper);color:var(--i
 .variant-table thead th{font-size:.53rem;font-weight:600;color:var(--ink3);letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-bottom:1px solid var(--border2);text-align:left;white-space:nowrap;background:transparent}
 .variant-table tbody tr{border-bottom:.5px solid var(--border)}
 .variant-table tbody tr:last-child{border-bottom:none}
-.vt-vol{padding:4px 8px;font-weight:600;color:var(--ink);font-size:.75rem;white-space:nowrap}
-.vt-boni{padding:4px 8px;color:var(--ink3);font-size:.68rem;white-space:nowrap}
-.vt-w{padding:4px 8px;font-weight:700;color:var(--gold);font-size:.8rem;white-space:nowrap}
-.vt-r{padding:4px 8px;font-weight:300;color:var(--ink3);font-size:.68rem;white-space:nowrap}
-.vt-bc{padding:4px 8px;color:var(--ink3);font-size:.62rem;letter-spacing:.05em;font-family:monospace}
+.vt-vol{padding:4px 8px;font-weight:600;color:var(--ink);font-size:.72rem;white-space:nowrap}
+.vt-boni{padding:4px 8px;color:var(--ink3);font-size:.72rem;white-space:nowrap}
+.vt-w{padding:4px 8px;font-weight:700;color:var(--gold);font-size:.72rem;white-space:nowrap}
+.vt-r{padding:4px 8px;font-weight:300;color:var(--ink3);font-size:.72rem;white-space:nowrap}
+.vt-bc{padding:4px 8px;color:var(--ink3);font-size:.72rem;letter-spacing:.05em;font-family:monospace}
 
 /* 스펙 */
 .p-specs{display:flex;flex-wrap:wrap;gap:3px;margin-top:.2rem}
@@ -855,8 +855,8 @@ function generateProposal() {
       var bcClean = bcParts[0].trim();
       rows += '<tr>';
       rows += '<td class="vt-vol">'  + (v.vol      ? v.vol+'ml'            : '-') + '</td>';
-      rows += '<td class="vt-boni">' + (v.boniipsu ? v.boniipsu+'입'       : '-') + '</td>';
       rows += '<td class="vt-w">'    + (v.wholesale ? fmtPrice(v.wholesale) : '-') + '</td>';
+      rows += '<td class="vt-boni">' + (v.boniipsu ? v.boniipsu+'입'       : '-') + '</td>';
       rows += '<td class="vt-r">'    + (v.price    ? fmtPrice(v.price)      : '-') + '</td>';
       rows += '<td class="vt-bc">'   + bcClean + '</td>';
       rows += '</tr>';
@@ -896,8 +896,8 @@ function generateProposal() {
     // ── 2행: 테이블 ──
     html += '<div class="p-table-row">';
     html += '<table class="variant-table"><thead><tr>';
-    html += '<th class="vt-vol">용량</th><th class="vt-boni">본입수</th>';
-    html += '<th class="vt-w">도매가</th><th class="vt-r">업소가</th><th class="vt-bc">바코드</th>';
+    html += '<th class="vt-vol">용량</th><th class="vt-w">도매가</th>';
+    html += '<th class="vt-boni">본입수</th><th class="vt-r">업소가</th><th class="vt-bc">바코드</th>';
     html += '</tr></thead><tbody>' + rows + '</tbody></table>';
     html += '</div>';
 
@@ -996,13 +996,12 @@ function copyProposalText() {
 
     grp.variants.forEach(function(v) {
       var volLabel = v.vol ? v.vol + 'ml' : '';
-      var title = (n+1) + '. ' + p.name + (volLabel ? ' ' + volLabel : '');
-      lines.push(title);
+      lines.push((n+1) + '. ' + p.name);
       if (p.supplier)  lines.push('수입사: ' + p.supplier);
       if (volLabel)    lines.push('용량: ' + volLabel);
+      if (v.wholesale) lines.push('도매가: ' + fmtPrice(v.wholesale));
       if (v.boniipsu)  lines.push('본입수: ' + v.boniipsu + '입');
       if (p.alc)       lines.push('도수: ' + p.alc + '%');
-      if (v.wholesale) lines.push('도매가: ' + fmtPrice(v.wholesale));
       if (v.price)     lines.push('업소가: ' + fmtPrice(v.price));
       var bcClean = (v.barcode||'').split(';')[0].trim();
       if (bcClean)     lines.push('바코드: ' + bcClean);
