@@ -819,10 +819,14 @@ function generateProposal() {
   document.getElementById('p-title').textContent     = biz;
   document.getElementById('p-title').style.display   = hasBiz ? '' : 'none';
   document.querySelector('.cover-vsep').style.display = hasBiz ? '' : 'none';
+  document.querySelector('.cover-kanji').style.display = hasBiz ? '' : 'none';
   document.getElementById('p-nav-title').textContent = hasBiz ? biz + ' 도매 제안서' : 'ILOSAKE 도매 제안서';
   document.getElementById('p-meta-date').textContent = monthStr ? monthStr + ' 기준' : '';
   document.getElementById('p-meta-name').textContent = salesName || '';
   document.getElementById('p-meta-tel').textContent  = salesTel  || '';
+  var hasSales = !!(salesName || salesTel);
+  document.querySelector('.cover-sales-row').style.display = hasSales ? '' : 'none';
+  document.querySelector('.cover-hsep').style.display      = (salesName && salesTel) ? '' : 'none';
 
   // selectedOrder → 그룹화
   var items    = selectedOrder.map(function(i){ return allProducts[i]; });
