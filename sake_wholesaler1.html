@@ -1064,8 +1064,7 @@ function copyCardInfo(e, idx) {
   if (p.price)     parts.push('업소가: ' + fmtPrice(p.price));
   if (barcode)     parts.push('바코드: ' + barcode);
   if (jujongStr)   parts.push('주종: ' + jujongStr);
-  var stock = getStock(p);
-  if (stock)       parts.push('재고: 서울 ' + stock.seoul + ' / 물류 ' + stock.logistics + ' / 부산 ' + stock.busan);
+
   var text = p.name + '\n' + parts.join('\n');
 
   navigator.clipboard.writeText(text).then(function() {
